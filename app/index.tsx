@@ -14,6 +14,10 @@ export default function Index() {
       <Link href="/(auth)/login">
         <Text style={styles.link}>Iniciar sesión</Text>
       </Link>
+
+      <Link href="/(client)/client">
+        <Text style={styles.link}>Clientes</Text>
+      </Link>
     </View>
   );
 }
