@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, ImageBackground, StyleSheet } from "react-native";
+import { View, Text, TextInput, Pressable, ImageBackground } from "react-native";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,12 +13,11 @@ export default function Login() {
   return (
     <ImageBackground
       source={require("@/assets/images/background.png")}
-      style={styles.background}
+      className="flex-1 justify-center items-center px-5 pt-48"
       resizeMode="cover"
-    > 
-
+    >
       <TextInput
-        style={styles.input}
+        className="w-11/12 h-12 rounded-2xl border border-gray-400 bg-gray-300 shadow-lg px-4 mb-7 text-black"
         placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -28,7 +27,7 @@ export default function Login() {
       />
 
       <TextInput
-        style={styles.input}
+        className="w-11/12 h-12 rounded-2xl border border-gray-400 bg-gray-300 shadow-lg px-4 mb-7 text-black"
         placeholder="Password"
         secureTextEntry
         value={password}
@@ -36,67 +35,13 @@ export default function Login() {
         placeholderTextColor="#5F5F5F"
       />
 
-      <Text style={styles.text}>Forgot password?</Text>
+      <Text className="text-base font-normal text-gray-500 self-end mr-10 mb-5">
+        Forgot password?
+      </Text>
 
-      <Pressable style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Sign in</Text>
+      <Pressable className="w-11/12 bg-blue-700 py-3 rounded-2xl items-center mt-2" onPress={handleLogin}>
+        <Text className="text-lg font-bold text-gray-300">Sign in</Text>
       </Pressable>
     </ImageBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 200,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "white",
-    textAlign: "center",
-    marginTop: 170,
-    marginBottom: 30,
-    textShadowColor: "rgba(0, 0, 0, 0.6)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 5,
-  },
-  input: {
-    width: "90%", 
-    height: 50,
-    borderRadius: 16, 
-    borderWidth: 1,
-    borderColor: "#AFAFAF", 
-    backgroundColor: "#E0E0E0", 
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-    marginBottom: 29,
-    paddingHorizontal: 15,
-  },
-  button: {
-    width: "90%",
-    backgroundColor: "#1666A6",
-    paddingVertical: 14,
-    borderRadius: 16,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#E0E0E0",
-  },
-  text:{
-    fontSize: 16,
-    fontWeight: "400",
-    color: "#5F5F5F",
-    marginLeft: 200,
-    marginBottom: 20,
-  }
-});
