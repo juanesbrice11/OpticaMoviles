@@ -16,6 +16,9 @@ export default function Index() {
       <Link href="/(client)/client">
         <Text style={styles.link}>Clientes</Text>
       </Link>
+      <Link href="/(client)/crear">
+        <Text style={styles.link}>Crear Clientes</Text>
+      </Link>
     </View>
   );
 }

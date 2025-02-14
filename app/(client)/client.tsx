@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, FlatList, Image } from 'react-native';
 import { Stack } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context'; 
+import { SafeAreaView } from 'react-native-safe-area-context';
 import imagen from '../../assets/images/iconOptica.png';
+import crear from '../../assets/images/crear.png';
 
 
 
@@ -23,12 +24,12 @@ const Client = () => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white"> 
+    <SafeAreaView className="flex-1 bg-white">
       <Stack.Screen options={{ title: 'Clientes' }} />
       <View className="items-center mt-4">
         <Image
           source={imagen}
-          className="w-48 h-48" 
+          className="w-48 h-48"
         />
       </View>
 
@@ -44,6 +45,15 @@ const Client = () => {
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
+
+      <View className="justify-end items-end absolute bottom-0 right-0 mb-4 mr-4">
+        <Image
+          source={crear}
+          className="w-30 h-30"
+        />
+      </View>
+
+
     </SafeAreaView>
   );
 };
