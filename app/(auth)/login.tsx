@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, ImageBackground, StyleSheet } from "react-native";
+import { View, Text, TextInput, Pressable, ImageBackground } from "react-native";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,78 +13,35 @@ export default function Login() {
   return (
     <ImageBackground
       source={require("@/assets/images/background.png")}
-      style={styles.background}
+      className="flex-1 justify-center items-center px-5 pt-48"
       resizeMode="cover"
     >
-      <Text style={styles.title}>Iniciar Sesión</Text>
-
       <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
+        className="w-11/12 h-12 rounded-2xl border border-gray-400 bg-gray-300 shadow-lg px-4 mb-7 text-black"
+        placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
         value={email}
         onChangeText={setEmail}
-        placeholderTextColor="#ddd"
+        placeholderTextColor="#5F5F5F"
       />
 
       <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
+        className="w-11/12 h-12 rounded-2xl border border-gray-400 bg-gray-300 shadow-lg px-4 mb-7 text-black"
+        placeholder="Password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
-        placeholderTextColor="#ddd"
+        placeholderTextColor="#5F5F5F"
       />
 
-      <Pressable style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Ingresar</Text>
+      <Text className="text-base font-normal text-gray-500 self-end mr-10 mb-5">
+        Forgot password?
+      </Text>
+
+      <Pressable className="w-11/12 bg-blue-700 py-3 rounded-2xl items-center mt-2" onPress={handleLogin}>
+        <Text className="text-lg font-bold text-gray-300">Sign in</Text>
       </Pressable>
     </ImageBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "white",
-    textAlign: "center",
-    marginTop: 170,
-    marginBottom: 30,
-    textShadowColor: "rgba(0, 0, 0, 0.6)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 5,
-  },
-  input: {
-    width: "90%",
-    height: 50,
-    borderColor: "black",
-    borderWidth: 2,
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    fontSize: 18,
-    color: "white",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    marginBottom: 15,
-  },
-  button: {
-    width: "90%",
-    backgroundColor: "#1769AA",
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-  },
-});

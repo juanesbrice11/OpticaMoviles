@@ -1,4 +1,3 @@
-// app/index.tsx
 import { StyleSheet } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { Link } from "expo-router";
@@ -10,9 +9,12 @@ export default function Index() {
 
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
-      {/* Enlace a la pantalla de Login */}
       <Link href="/(auth)/login">
         <Text style={styles.link}>Iniciar sesión</Text>
+      </Link>
+
+      <Link href="/(client)/client">
+        <Text style={styles.link}>Clientes</Text>
       </Link>
     </View>
   );
