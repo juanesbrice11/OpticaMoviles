@@ -39,7 +39,7 @@ export default function Login() {
         Forgot password?
       </Text>
 
-      <Pressable className="w-11/12 bg-blue-700 py-3 rounded-2xl items-center mt-2" onPress={handleLogin}>
+      <Pressable className="w-11/12 bg-blue py-3 rounded-2xl items-center mt-2" onPress={handleLogin}>
         <Text className="text-lg font-bold text-gray-300">Sign in</Text>
       </Pressable>
     </ImageBackground>

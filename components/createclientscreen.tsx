@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, Image, TextInput, Pressable } from 'react-native';
 import { Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import imagen from '../assets/images/iconOptica.png';
 
 const CreateClientScreen = () => {
   const [nombre, setNombre] = useState("");
@@ -16,7 +15,7 @@ const CreateClientScreen = () => {
     <SafeAreaView className="flex-1 bg-white px-20">
       <View className="items-center mt-4">
         <Image
-          source={imagen}
+          source={require("@/assets/images/iconOptica.png")}
           className="w-48 h-48"
         />
       </View>

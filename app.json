@@ -18,9 +18,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/iconOptica.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.juanesbrice.Optica"
     },
     "web": {
       "bundler": "metro",
@@ -32,6 +33,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "8e7a08a6-669f-4298-9c87-8ffbef990dda"
+      }
     }
   }
 }
