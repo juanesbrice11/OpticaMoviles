@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, ImageBackground } from "react-native";
+import { Link, useRouter } from "expo-router";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter(); 
 
   const handleLogin = () => {
     console.log("Correo:", email);
     console.log("Contraseña:", password);
+
+    router.push("../home");
+
   };
 
   return (
@@ -39,9 +44,12 @@ export default function Login() {
         Forgot password?
       </Text>
 
-      <Pressable className="w-11/12 bg-blue-700 py-3 rounded-2xl items-center mt-2" onPress={handleLogin}>
+      
+      <Pressable className="w-11/12 bg-blue py-3 rounded-2xl items-center mt-2" onPress={handleLogin}>
         <Text className="text-lg font-bold text-gray-300">Sign in</Text>
       </Pressable>
+
+
     </ImageBackground>
   );
 }

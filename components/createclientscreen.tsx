@@ -13,6 +13,7 @@ const CreateClientScreen = () => {
           className="w-44 h-44"
         />
       </View>
+
       <Text className="text-2xl font-bold text-center mb-5 text-blue"> Crear Clientes</Text>
 
       <FormComponent 
