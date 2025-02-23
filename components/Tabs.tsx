@@ -31,11 +31,11 @@ export default function TabNavigator() {
       />
 
       <Tabs.Screen
-        name="settings"
+        name="sales"
         options={{
-          title: "Settings",
+          title: "sales",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+            <Ionicons name="bag-handle-outline" size={size} color={color} />
           ),
         }}
       />
