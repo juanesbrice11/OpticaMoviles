@@ -1,94 +1,32 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, Image, TextInput, Pressable } from 'react-native';
-import { Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import FormComponent from './Form';
 
 const CreateClientScreen = () => {
-  const [nombre, setNombre] = useState("");
-  const [apellido, setApellido] = useState("");
-  const [correo, setCorreo] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [cedula, setCedula] = useState("");
-
 
   return (
     <SafeAreaView className="flex-1 bg-white px-20">
-      <View className="items-center mt-4">
+      <View className="items-center">
         <Image
           source={require("@/assets/images/iconOptica.png")}
-          className="w-48 h-48"
-        />
-      </View>
-      <Text className="text-2xl font-bold text-center mt-4 text-blue"> Crear Clientes</Text>
-
-      <View className="w-full mb-4">
-        <Text className="text-gray-700 mb-1">Nombre</Text>
-        <TextInput
-          className="border border-gray-300 rounded-md px-3 py-2"
-          placeholder="Ingresa tu nombre"
-          value={nombre}
-          onChangeText={setNombre}
+          className="w-44 h-44"
         />
       </View>
 
-      <View className="w-full mb-4">
-        <Text className="text-gray-700 mb-1">Apellido</Text>
-        <TextInput
-          className="border border-gray-300 rounded-md px-3 py-2"
-          placeholder="Ingresa tu apellido"
-          value={apellido}
-          onChangeText={setApellido}
-        />
-      </View>
+      <Text className="text-2xl font-bold text-center mb-5 text-blue"> Crear Clientes</Text>
 
-      <View className="w-full mb-4">
-        <Text className="text-gray-700 mb-1">Correo electrónico</Text>
-        <TextInput
-          className="border border-gray-300 rounded-md px-3 py-2"
-          placeholder="correo@ejemplo.com"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={correo}
-          onChangeText={setCorreo}
-        />
-      </View>
-
-      <View className="w-full mb-4">
-        <Text className="text-gray-700 mb-1">Teléfono</Text>
-        <TextInput
-          className="border border-gray-300 rounded-md px-3 py-2"
-          placeholder="3001234567"
-          keyboardType="phone-pad"
-          value={telefono}
-          onChangeText={setTelefono}
-        />
-      </View>
-
-      <View className="w-full mb-6">
-        <Text className="text-gray-700 mb-1">Cédula</Text>
-        <TextInput
-          className="border border-gray-300 rounded-md px-3 py-2"
-          placeholder="12345678"
-          keyboardType="numeric"
-          value={cedula}
-          onChangeText={setCedula}
-        />
-      </View>
-
-      <View className='flex-row justify-end bottom-0 right-0 mb-4 mr-4'>
-        <Pressable
-          className="rounded-md py-3 w-20 items-center"
-        >
-          <Text className="text-black font-bold">Cancel</Text>
-        </Pressable>
-
-        <Pressable
-          className="bg-blue rounded-md w-20 py-3 items-center"
-        >
-          <Text className="text-white font-bold">Save</Text>
-        </Pressable>
-      </View>
-
+      <FormComponent 
+        fields={[
+          { name: 'nombre', type: 'name', placeholder: 'Nombre', label: 'Nombre' },
+          { name: 'apellido', type: 'lastname', placeholder: 'Apellido', label: 'Apellido' },
+          { name: 'email', type: 'email', placeholder: 'Email', label: 'Email' },
+          { name: 'id', type: 'id', placeholder: 'Cédula', label: 'Cédula' },
+          { name: 'celular', type: 'phone', placeholder: 'Celular', label: 'Celular' },
+        ]}
+        buttonAccept='Aceptar' 
+        buttonCancel='Cancelar'
+      />
     </SafeAreaView>
   );
 }
