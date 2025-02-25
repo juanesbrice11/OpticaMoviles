@@ -1,7 +1,7 @@
-import Home from "@/app/(home)/home";
+import Home from "@/components/home";
 
 export default function HomeScreen() {
   return (
-    <Home />
+    <Home/>
   );
 }
