@@ -31,7 +31,7 @@ export default function SalesScreen() {
           className="w-44 h-44"
         />
       </View>
-      <Text className="text-2xl font-bold text-center mt-4">Sales</Text>
+      <Text className="text-2xl font-bold text-center text-blue mt-4">Sales</Text>
       <ScrollView className="w-full">
         {sales.map((sale) => (
           <SalesViewerComponent key={sale.id} {...sale} />
