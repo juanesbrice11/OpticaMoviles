@@ -8,13 +8,13 @@ export default function TabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: "blue",
         tabBarInactiveTintColor: "gray",
-        tabBarStyle: { backgroundColor: "#fff", height: 60 },
+        tabBarStyle: { backgroundColor: "#fff", height: 60, margin:40, borderRadius: 20, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 4, }
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
-          title: "Home",
+          title: "Inicio",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
@@ -22,9 +22,9 @@ export default function TabNavigator() {
       />
 
       <Tabs.Screen
-        name="profile"
+        name="clients"
         options={{
-          title: "Profile",
+          title: "Clientes",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),
@@ -34,7 +34,7 @@ export default function TabNavigator() {
       <Tabs.Screen
         name="sales"
         options={{
-          title: "sales",
+          title: "Ventas",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="bag-handle-outline" size={size} color={color} />
           ),

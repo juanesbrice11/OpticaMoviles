@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, Image, Pressable } from "react-native";
 import { Link } from "expo-router";
 import Card from '@/components/Card';
-import { glassesData } from '@/app/(glasses)/glassessData';
+import { glassesData } from '@/app/(home)/glassessData';
 
 const Home = () => {
   return (
