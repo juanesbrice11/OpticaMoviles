@@ -2,6 +2,8 @@ import { View, Text, ScrollView, Image, Pressable } from "react-native";
 import { Link } from "expo-router";
 import Card from '@/components/Card';
 import { glassesData } from '@/app/(home)/glassessData';
+import GenericSearchBar from "@/components/SearchBar";
+import { CardProps } from "@/types/api";
 
 const Home = () => {
   return (
