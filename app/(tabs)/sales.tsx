@@ -25,10 +25,10 @@ export default function SalesScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="items-center mt-4">
+      <View className="items-center mb-3">
         <Image
-          source={require("@/assets/images/iconOptica.png")}
-          className="w-44 h-44"
+          source={require("@/assets/images/top.png")}
+          className="w-full h-44"
         />
       </View>
       <Text className="text-2xl font-bold text-center text-blue mt-4">Sales</Text>

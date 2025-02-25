@@ -83,11 +83,11 @@ export default function CrearGafa() {
     };
 
     return (
-        <View className="flex-1 bg-white px-20">
-            <View className="items-center">
+        <View className="flex-1 bg-white">
+            <View className="items-center mb-7">
                 <Image
-                    source={require("@/assets/images/iconOptica.png")}
-                    style={{ width: 176, height: 176 }}
+                    source={require("@/assets/images/top.png")}
+                    className="w-full h-44"
                 />
             </View>
             <Text className="text-2xl font-bold text-center mb-5 text-blue">Crear Gafa</Text>
@@ -101,5 +101,6 @@ export default function CrearGafa() {
                 onCancel={onCancel}
             />
         </View>
+        
     );
 }
