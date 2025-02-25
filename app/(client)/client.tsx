@@ -30,7 +30,7 @@ export default function Client() {
       <View className="items-center mt-4">
         <Image
           source={require("@/assets/images/iconOptica.png")}
-          className="w-48 h-48"
+          className="w-44 h-44"
         />
       </View>
       <Text className="text-2xl font-bold text-center mt-4">Clientes</Text>
