@@ -1,6 +1,6 @@
 // Client.tsx
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -26,14 +26,14 @@ export default function Client() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-white">
       <View className="items-center mt-4">
         <Image
           source={require("@/assets/images/iconOptica.png")}
           className="w-48 h-48"
         />
       </View>
-      <Text className="text-2xl font-bold text-center mt-4">Clientes</Text>
+      <Text className="text-2xl text-blue text-center mt-4">Clientes</Text>
       <GenericSearchBar<ClientSchema>
         data={clients}
         placeholder="Buscar clientes..."
@@ -52,6 +52,6 @@ export default function Client() {
           <Ionicons name="add-circle" size={60} color="#1769AA" />
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
