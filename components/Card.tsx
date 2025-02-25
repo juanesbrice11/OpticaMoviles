@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, ImageSourcePropType } from 'react-native';
 
 interface CardProps {
   name: string;
-  imageUri: string;
+  imageUri: ImageSourcePropType;
   price: number;
   material: string;
   id: string | number;
