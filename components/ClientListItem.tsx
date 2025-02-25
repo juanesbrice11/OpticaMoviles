@@ -15,6 +15,9 @@ export default function ClientListItem({ client }: { client: ClientSchema }) {
         {client.nombre} <Text className="text-gray-500">nombre</Text>
       </Text>
       <Text className="text-base">
+        {client.apellido} <Text className="text-gray-500">apellido</Text>
+      </Text>
+      <Text className="text-base">
         {client.telefono} <Text className="text-gray-500">telefono</Text>
       </Text>
       <Text className="text-base">

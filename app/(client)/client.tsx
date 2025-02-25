@@ -24,13 +24,13 @@ export default function Client() {
 
   return (
     <ScrollView className="flex-1 bg-white">
-      <View className="items-center mt-4">
+      <View className="items-center mb-4">
         <Image
-          source={require("@/assets/images/iconOptica.png")}
-          className="w-44 h-44"
+          source={require("@/assets/images/top.png")}
+          className="w-full h-44"
         />
       </View>
-      <Text className="text-2xl font-bold text-center mb-5 text-blue">Clientes</Text>
+      <Text className="text-2xl font-bold text-center mb-2 text-blue">Clientes</Text>
       <GenericSearchBar<ClientSchema>
         data={clients}
         placeholder="Buscar clientes..."

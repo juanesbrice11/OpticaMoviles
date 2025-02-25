@@ -39,7 +39,7 @@ export default function CreateClientScreen() {
   const router = useRouter();
 
   const handleCancel = () => {
-    router.push("/home");
+    router.push("/client");
   };
 
   const handleSubmit = (data: ClientSchema) => {
@@ -49,15 +49,15 @@ export default function CreateClientScreen() {
     );
     console.log("Datos del nuevo cliente:", data);
 
-    router.push("/home");
+    router.push("/client");
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-20">
-      <View className="items-center">
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="items-center mb-7">
         <Image
-          source={require("@/assets/images/iconOptica.png")}
-          className="w-44 h-44"
+          source={require("@/assets/images/top.png")}
+          className="w-full h-44"
         />
       </View>
 
@@ -104,6 +104,12 @@ export default function CreateClientScreen() {
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       />
+      <View className="items-center bottom-0">
+        <Image
+          source={require("@/assets/images/abajo.png")}
+          className="w-full h-44"
+        />
+      </View>
     </SafeAreaView>
   );
 }
