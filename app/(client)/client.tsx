@@ -14,11 +14,11 @@ export default function Client() {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const clients: ClientSchema[] = [
-    { id: "1", cedula: "123456789", nombre: "Juan Pérez", telefono: "555-1234", historiaClinica: "Historia 1" },
-    { id: "2", cedula: "987654321", nombre: "Ana Gómez", telefono: "555-5678", historiaClinica: "Historia 2" },
-    { id: "3", cedula: "456789123", nombre: "Carlos Ruiz", telefono: "555-9012", historiaClinica: "Historia 3" },
-    { id: "4", cedula: "321654987", nombre: "María López", telefono: "555-3456", historiaClinica: "Historia 4" },
-    { id: "5", cedula: "654987321", nombre: "Pedro Martínez", telefono: "555-7890", historiaClinica: "Historia 5" },
+    { id: "1", cedula: "123456789", nombre: "Juan", apellido: "Pérez", telefono: "555-1234", email: "juan.perez@example.com", historiaClinica: "Historia 1" },
+    { id: "2", cedula: "987654321", nombre: "Ana", apellido: "Gómez", telefono: "555-5678", email: "ana.gomez@example.com", historiaClinica: "Historia 2" },
+    { id: "3", cedula: "456789123", nombre: "Carlos", apellido: "Ruiz", telefono: "555-9012", email: "carlos.ruiz@example.com", historiaClinica: "Historia 3" },
+    { id: "4", cedula: "321654987", nombre: "María", apellido: "López", telefono: "555-3456", email: "maria.lopez@example.com", historiaClinica: "Historia 4" },
+    { id: "5", cedula: "654987321", nombre: "Pedro", apellido: "Martínez", telefono: "555-7890", email: "pedro.martinez@example.com", historiaClinica: "Historia 5" },
   ];
 
   const renderClient = ({ item }: { item: ClientSchema }) => (
@@ -33,7 +33,7 @@ export default function Client() {
           className="w-44 h-44"
         />
       </View>
-      <Text className="text-2xl text-blue text-center mt-4">Clientes</Text>
+      <Text className="text-2xl font-bold text-center mb-5 text-blue">Clientes</Text>
       <GenericSearchBar<ClientSchema>
         data={clients}
         placeholder="Buscar clientes..."

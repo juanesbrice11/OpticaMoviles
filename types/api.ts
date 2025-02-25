@@ -4,6 +4,8 @@ export interface ClientSchema {
     id: string;
     cedula: string;
     nombre: string;
+    apellido: string;
+    email: string;
     telefono: string;
     historiaClinica: string;
   }
