@@ -1,9 +1,56 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, Image, TextInput, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import FormComponent from './Form';
+// CreateClientScreen.tsx
+import React from "react";
+import { View, Text, Image, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { z } from "zod";
 
-const CreateClientScreen = () => {
+import { FormComponent } from "./Form"; 
+import { ClientSchema } from "@/types/api";
+
+
+const createClientSchema: z.ZodType<ClientSchema> = z.object({
+  id: z.string().nonempty("El campo es obligatorio"),
+  nombre: z
+    .string()
+    .nonempty("El campo es obligatorio")
+    .min(3, "El nombre debe tener al menos 3 caracteres"),
+  apellido: z
+    .string()
+    .nonempty("El campo es obligatorio")
+    .min(3, "El apellido debe tener al menos 3 caracteres"),
+  email: z
+    .string()
+    .nonempty("El campo es obligatorio")
+    .email("El email no es válido"),
+  cedula: z
+    .string()
+    .nonempty("El campo es obligatorio")
+    .min(6, "La cédula no es válida"),
+  telefono: z
+    .string()
+    .nonempty("El campo es obligatorio")
+    .min(10, "El número debe tener al menos 10 dígitos")
+    .max(10, "El número debe tener máximo 10 dígitos"),
+  historiaClinica: z.string().nonempty("El campo es obligatorio"),
+});
+
+export default function CreateClientScreen() {
+  const router = useRouter();
+
+  const handleCancel = () => {
+    router.push("/home");
+  };
+
+  const handleSubmit = (data: ClientSchema) => {
+    Alert.alert(
+      "Cliente creado",
+      `La creación del cliente fue exitosa. Cédula: ${data.cedula}`
+    );
+    console.log("Datos del nuevo cliente:", data);
+
+    router.push("/home");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white px-20">
@@ -14,20 +61,49 @@ const CreateClientScreen = () => {
         />
       </View>
 
-      <Text className="text-2xl font-bold text-center mb-5 text-blue"> Crear Clientes</Text>
+      <Text className="text-2xl font-bold text-center mb-5 text-blue">
+        Crear Clientes
+      </Text>
 
-      <FormComponent 
+      <FormComponent<ClientSchema>
+        schema={createClientSchema}
         fields={[
-          { name: 'nombre', type: 'name', placeholder: 'Nombre', label: 'Nombre' },
-          { name: 'apellido', type: 'lastname', placeholder: 'Apellido', label: 'Apellido' },
-          { name: 'email', type: 'email', placeholder: 'Email', label: 'Email' },
-          { name: 'id', type: 'id', placeholder: 'Cédula', label: 'Cédula' },
-          { name: 'celular', type: 'phone', placeholder: 'Celular', label: 'Celular' },
+          {
+            name: "nombre",
+            type: "nombre",
+            placeholder: "Nombre",
+            label: "Nombre",
+          },
+          {
+            name: "apellido",
+            type: "apellido",
+            placeholder: "Apellido",
+            label: "Apellido",
+          },
+          {
+            name: "email",
+            type: "email",
+            placeholder: "Email",
+            label: "Email",
+          },
+          {
+            name: "cedula",
+            type: "cedula",
+            placeholder: "Cédula",
+            label: "Cédula",
+          },
+          {
+            name: "celular",
+            type: "telefono",
+            placeholder: "Celular",
+            label: "Celular",
+          },
         ]}
-        buttonAccept='Aceptar' 
-        buttonCancel='Cancelar'
+        buttonAccept="Aceptar"
+        buttonCancel="Cancelar"
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
       />
     </SafeAreaView>
   );
 }
-export default CreateClientScreen;

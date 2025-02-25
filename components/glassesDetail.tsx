@@ -12,16 +12,11 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { useRouter } from "expo-router";
 
-interface GlassesDetailProps {
-    id: number;
-    name: string;
-    material: string;
-    price: number;
-    stock: number;
-    imageUri: any;
-}
+import { CardProps } from "@/types/api";
 
-const GlassesDetail = ({ id, name, material, price, stock, imageUri }: GlassesDetailProps) => {
+
+
+const GlassesDetail = ({ id, name, material, price, stock, imageUri }: CardProps) => {
 
     const router = useRouter();
 

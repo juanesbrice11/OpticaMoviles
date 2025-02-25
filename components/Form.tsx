@@ -1,67 +1,84 @@
-import { View, Text, TextInput, KeyboardAvoidingView, Platform, Pressable } from 'react-native'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import React from 'react'
+// FormComponent.tsx
+import React from 'react';
+import { View, Text, TextInput, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-const schema = z.object({
-    name: z.string().nonempty("El campo es obligatorio").min(3, "El nombre debe tener al menos 3 caracteres"),
-    lastname: z.string().nonempty("El campo es obligatorio").min(3, "El apellido debe tener al menos 3 caracteres"),
-    email: z.string().nonempty("El campo es obligatorio").email("El email no es válido"),
-    id: z.string().nonempty("El campo es obligatorio").min(6, "El id no es válido"),
-    phone: z.string().nonempty("El campo es obligatorio").min(10, "El número debe tener al menos 10 dígitos").max(10, "El número debe tener máximo 10 dígitos")
-})
-
-type FormSchema = z.infer<typeof schema>;
-
-interface FormField {
-    name: string;
-    type: keyof FormSchema;
-    placeholder: string;
-    label: string;
+export interface FormField<TSchema> {
+  name: string;            
+  type: keyof TSchema;      
+  placeholder: string;
+  label: string;
 }
 
-interface FormComponentProps {
-    fields: FormField[];
-    buttonAccept: string;
-    buttonCancel: string;
+import { FieldValues, Path } from 'react-hook-form';
+
+interface FormComponentProps<TSchema extends FieldValues> {
+  schema: z.ZodType<TSchema>;           
+  fields: FormField<TSchema>[];          
+  buttonAccept: string;                  
+  buttonCancel: string;                 
+  onSubmit: (data: TSchema) => void;   
+  onCancel?: () => void;                 
 }
 
-const FormComponent = ({ fields, buttonAccept, buttonCancel }: FormComponentProps) => {
+export function FormComponent<TSchema extends FieldValues>({
+  schema,
+  fields,
+  buttonAccept,
+  buttonCancel,
+  onSubmit,
+  onCancel,
+}: FormComponentProps<TSchema>) {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<TSchema>({
+    resolver: zodResolver(schema),
+  });
 
-    const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormSchema>({
-        resolver: zodResolver(schema)
-    });
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      className="items-center mt-4 w-full"
+    >
+      {fields.map((field) => (
+        <View className="w-11/12 mb-4" key={field.name}>
+          <Text className="text-gray-700 mb-1">{field.label}</Text>
+          <TextInput
+            className="border border-gray-300 p-2 rounded-lg"
+            placeholder={field.placeholder}
+            value={String(watch(field.type as Path<TSchema>) ?? '')}
+            onChangeText={(text) => setValue(field.type as Path<TSchema>, text as any)}
+            {...register(field.type as Path<TSchema>)}
+          />
+          {errors[field.type] && (
+            <Text className="text-red-500">
+              {String(errors[field.type]?.message)}
+            </Text>
+          )}
+        </View>
+      ))}
 
-    const onSubmit = (data: FormSchema) => {
-        console.log(data)
-    }
+      <View className="flex-row w-11/12 mt-4 justify-end gap-2">
+        <Pressable
+          className="bg-red-500 rounded-md w-20 py-3 items-center"
+          onPress={() => (onCancel ? onCancel() : null)}
+        >
+          <Text className="text-white font-bold">{buttonCancel}</Text>
+        </Pressable>
 
-    return (
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : "height"} className='items-center mt-4'>
-            {fields.map((field) => (
-                <View className='w-full mb-4' key={field.name}>
-                    <Text className='text-gray-700 mb-1'>{field.label}</Text>
-                    <TextInput
-                        className='border border-gray-300 p-2 rounded-lg'
-                        placeholder={field.placeholder}
-                        value={watch(field.type)}
-                        onChangeText={(text) => setValue(field.type, text)}
-                        {...register(field.type)}
-                    />
-                    {errors[field.type] && <Text className="text-red-500">{errors[field.type]?.message}</Text>}
-                </View>
-            ))}
-            <View className='flex-row w-full mt-4 justify-end gap-2'>
-                <Pressable className="bg-red rounded-md w-20 py-3 items-center" onPress={() => console.log('Operación cancelada')}>
-                    <Text className="text-black font-bold">{buttonCancel}</Text>
-                </Pressable>
-                <Pressable className="bg-blue rounded-md w-20 py-3 items-center" onPress={handleSubmit(onSubmit)}>
-                    <Text className="text-white font-bold">{buttonAccept}</Text>
-                </Pressable>
-            </View>
-        </KeyboardAvoidingView>
-    )
+        <Pressable
+          className="bg-blue rounded-md w-20 py-3 items-center"
+          onPress={handleSubmit(onSubmit)}
+        >
+          <Text className="text-white font-bold">{buttonAccept}</Text>
+        </Pressable>
+      </View>
+    </KeyboardAvoidingView>
+  );
 }
-
-export default FormComponent
