@@ -39,7 +39,7 @@ const Home = () => {
                 ))}
             </View>
         </ScrollView>
-  )
+    )
 }
 
 export default Home
