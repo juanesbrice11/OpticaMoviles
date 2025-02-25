@@ -1,14 +1,7 @@
 import React from 'react';
-import { View, Text, Image, ImageSourcePropType } from 'react-native';
+import { View, Text, Image} from 'react-native';
+import { CardProps } from '@/types/api';
 
-interface CardProps {
-  name: string;
-  imageUri: ImageSourcePropType;
-  price: number;
-  material: string;
-  id: string | number;
-  stock: number;
-}
 
 export default function Card({ name, imageUri, price, material, id, stock }: CardProps) {
   return (
