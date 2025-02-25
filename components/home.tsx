@@ -1,12 +1,11 @@
 import { View, Text, ScrollView, Image, Pressable } from "react-native";
 import { Link } from "expo-router";
 import Card from '@/components/Card';
-import { glassesData } from './glassessData';
+import { glassesData } from '@/app/(glasses)/glassessData';
 
-export default function HomeScreen() {
-
-    return (
-        <ScrollView className="flex-1 bg-white">
+const Home = () => {
+  return (
+ <ScrollView className="flex-1 bg-white">
             <View className="items-center">
                 <Image
                     source={require("@/assets/images/iconOptica.png")}
@@ -38,5 +37,7 @@ export default function HomeScreen() {
                 ))}
             </View>
         </ScrollView>
-    );
+  )
 }
+
+export default Home
