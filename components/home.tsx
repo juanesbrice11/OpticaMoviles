@@ -15,9 +15,7 @@ const Home = () => {
                     className="w-44 h-44"
                 />
             </View>
-            <View className="items-center">
-                <Text className="text-2xl font-bold text-blue">inventario</Text>
-            </View>
+            <Text className="text-2xl font-bold text-center text-blue mt-4">Inventario</Text>
             <View className="flex flex-row flex-wrap justify-center p-4">
                 {glassesData.map((item) => (
                     <Link
