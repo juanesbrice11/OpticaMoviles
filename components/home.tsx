@@ -6,17 +6,15 @@ import GenericSearchBar from "@/components/SearchBar";
 import { CardProps } from "@/types/api";
 
 const Home = () => {
-  return (
- <ScrollView className="flex-1 bg-white">
-            <View className="items-center">
+    return (
+        <ScrollView className="flex-1 bg-white">
+            <View className="items-center mt-4">
                 <Image
                     source={require("@/assets/images/iconOptica.png")}
                     className="w-44 h-44"
                 />
             </View>
-            <View className="items-center">
-                <Text className="text-2xl font-bold text-blue">inventario</Text>
-            </View>
+            <Text className="text-2xl font-bold text-center text-blue mt-4">Inventario</Text>
             <View className="flex flex-row flex-wrap justify-center p-4">
                 {glassesData.map((item) => (
                     <Link
