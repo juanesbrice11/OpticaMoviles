@@ -5,6 +5,7 @@ export default function TabNavigator() {
   return (
     <Tabs
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: "blue",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: { backgroundColor: "#fff", height: 60 },
