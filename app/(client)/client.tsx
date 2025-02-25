@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, FlatList, Image } from 'react-native';
-import { Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import imagen from '../../assets/images/iconOptica.png';
-import crear from '../../assets/images/crear.png';
-
-
+import { Ionicons } from '@expo/vector-icons';
 
 const Client = () => {
   const clients = [
     { id: '1', cedula: '123456789', nombre: 'Juan Pérez', telefono: '555-1234', historiaClinica: 'Historia 1' },
     { id: '2', cedula: '987654321', nombre: 'Ana Gómez', telefono: '555-5678', historiaClinica: 'Historia 2' },
     { id: '3', cedula: '456789123', nombre: 'Carlos Ruiz', telefono: '555-9012', historiaClinica: 'Historia 3' },
+    { id: '4', cedula: '321654987', nombre: 'María López', telefono: '555-3456', historiaClinica:'Historia 4' },
+    { id: '5', cedula: '654987321', nombre: 'Pedro Martínez', telefono: '555-7890', historiaClinica:'Historia 5' }
+
   ];
 
   const renderItem = ({ item }) => (
@@ -28,7 +28,7 @@ const Client = () => {
       <Stack.Screen options={{ title: 'Clientes' }} />
       <View className="items-center mt-4">
         <Image
-          source={imagen}
+          source={require("@/assets/images/iconOptica.png")}
           className="w-48 h-48"
         />
       </View>
@@ -47,12 +47,12 @@ const Client = () => {
       />
 
       <View className="justify-end items-end absolute bottom-0 right-0 mb-4 mr-4">
-        <Image
-          source={crear}
-          className="w-30 h-30"
-        />
-      </View>
+        <Link href="/crear">
 
+          <Ionicons name="add-circle" size={60} color="#1769AA" />
+        </Link>
+
+      </View>
 
     </SafeAreaView>
   );
