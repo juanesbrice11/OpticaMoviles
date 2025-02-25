@@ -26,6 +26,7 @@ const GenericSearchBar = <T,>({
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding" : "height"} className="relative">
                 <TextInput
                     placeholder={placeholder}
+                    placeholderTextColor="#555"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                     className="py-2 px-2 border border-gray-300 rounded-md"
