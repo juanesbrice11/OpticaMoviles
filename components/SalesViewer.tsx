@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text, Image, View } from 'react-native';
+import { Text, Image, View } from 'react-native';
 
 interface SalesViewerProps {
     id: string | number;
@@ -19,19 +19,19 @@ export default function SalesViewerComponent({
     date,
 }: SalesViewerProps): JSX.Element {
     return (
-            <View className="bg-white rounded-[18px] border-[2px] border-primary w-3/4 h- m-2 p-4 flex-row items-center">
-                <View className="flex-1 pr-4">
-                    <Text className="text-lg font-bold">ID: {id}</Text>
-                    <Text className="text-sm mt-1 text-gray-700">Client ID: {client_id}</Text>
-                    <Text className="text-sm mt-1 text-gray-700">Product ID: {product_id}</Text>
-                    <Text className="text-sm mt-1 text-gray-700">Date: {date}</Text>
-                    <Text className="text-sm mt-1 text-gray-700">Total: ${total}</Text>
-                </View>
-                <Image
-                    source={product_image}
-                    className="w-40 h-40"
-                    resizeMode="contain"
-                />
+        <View className="bg-white rounded-2xl shadow-lg shadow-black/30 w-11/12 mx-auto my-2 p-5 flex-row items-center gap-4 border border-gray-200 ">
+            <Image
+                source={product_image}
+                className="w-24 h-24 rounded-lg shadow-md mx-10"
+                resizeMode="contain"
+            />
+            <View className="flex-1">
+                <Text className="text-lg font-bold text-gray-900">ID: {id}</Text>
+                <Text className="text-sm text-gray-600">Cliente: {client_id}</Text>
+                <Text className="text-sm text-gray-600">Producto: {product_id}</Text>
+                <Text className="text-sm text-gray-600">Fecha: {date}</Text>
+                <Text className="text-lg font-bold text-primary mt-1">${total}</Text>
             </View>
+        </View>
     );
 };
