@@ -9,7 +9,7 @@ export default function TabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "black",
-        tabBarStyle: { backgroundColor: "#1769AA", height: 80, borderRadius: 20, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 4, paddingTop: 10 }
+        tabBarStyle: { backgroundColor: "#1769AA", height: 80, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 4, paddingTop: 10 }
       }}
     >
 

@@ -19,7 +19,7 @@ export default function SalesViewerComponent({
     date,
 }: SalesViewerProps): JSX.Element {
     return (
-            <View className="bg-white rounded-[18px] border-[2px] border-primary w-3/4 h-40 m-2 p-4 flex-row items-center">
+            <View className="bg-white rounded-[18px] border-[2px] border-primary w-3/4 h- m-2 p-4 flex-row items-center">
                 <View className="flex-1 pr-4">
                     <Text className="text-lg font-bold">ID: {id}</Text>
                     <Text className="text-sm mt-1 text-gray-700">Client ID: {client_id}</Text>
