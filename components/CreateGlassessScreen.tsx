@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { GafasSchema, gafasSchema } from '@/types/schemas';
 import { FormComponent, FormField } from '@/components/Form';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { texttitile } from './tokens';
 
 
 const fields: FormField<GafasSchema>[] = [
@@ -95,7 +96,7 @@ export default function CrearGafa() {
                     className="w-full h-44"
                 />
             </View>
-            <Text className="text-2xl font-bold text-center mb-5 text-primary">Crear Gafa</Text>
+            <Text className={`${texttitile}`}>Crear Gafa</Text>
 
             <FormComponent<GafasSchema>
                 schema={gafasSchema}

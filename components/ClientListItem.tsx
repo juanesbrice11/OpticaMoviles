@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import { ClientSchema } from "@/types/api";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { textblack, textgray500 } from "./tokens";
 
 
 

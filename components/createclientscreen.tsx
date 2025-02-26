@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { FormComponent, FormField } from "./Form";
 import { ClientSchema, clientSchema } from "@/types/schemas";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { texttitile } from "./tokens";
 
 const fields: FormField<ClientSchema>[] = [
   {
@@ -85,7 +86,7 @@ export default function CreateClientScreen() {
           className="w-full h-44"
         />
       </View>
-      <Text className="text-2xl font-bold text-center mb-5 text-primary">
+      <Text className={`${texttitile}`}>
         Crear Cliente
       </Text>
 

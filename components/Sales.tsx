@@ -2,6 +2,7 @@ import React from "react";
 import SalesViewerComponent from "@/components/SalesViewer";
 import { View, Text, ScrollView, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { texttitile } from "./tokens";
 
 export default function Sales() {
   const sales = [
@@ -32,7 +33,7 @@ export default function Sales() {
         className="w-full h-44"
       />
 
-      <Text className="text-2xl font-bold text-center text-primary mt-[8%] mb-5">Sales</Text>
+      <Text className={`${texttitile}`}>Sales</Text>
       <ScrollView className="w-full">
         <View className="items-center">
           {sales.map((sale) => (
