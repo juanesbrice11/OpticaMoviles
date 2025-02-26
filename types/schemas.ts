@@ -29,3 +29,10 @@ export const clientSchema = z.object({
 });
 
 export type ClientSchema = z.infer<typeof clientSchema>;
+
+export const loginSchema = z.object({
+    email: z.string().nonempty("El campo es obligatorio").email("El email no es válido"),
+    password: z.string().nonempty("El campo es obligatorio")
+});
+
+export type LoginSchema = z.infer<typeof loginSchema>;
