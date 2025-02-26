@@ -23,36 +23,44 @@ export default function Client() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-white">
-      <View className="items-center mb-4">
-        <Image
-          source={require("@/assets/images/top.png")}
-          className="w-full h-44"
+    <View className="flex-1 bg-white relative">
+      <ScrollView>
+        <View className="items-center">
+          <Image
+            source={require("@/assets/images/top.png")}
+            className="w-full h-44"
+          />
+        </View>
+
+        <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
+          Clientes
+        </Text>
+
+        <GenericSearchBar<ClientSchema>
+          data={clients}
+          placeholder="Buscar clientes..."
+          filterPredicate={(client, query) =>
+            client.nombre.toLowerCase().includes(query.toLowerCase()) ||
+            client.cedula.includes(query)
+          }
+          renderItem={renderClient}
         />
-      </View>
-      <Text className="text-2xl font-bold text-center mb-2 text-blue">Clientes</Text>
-      <GenericSearchBar<ClientSchema>
-        data={clients}
-        placeholder="Buscar clientes..."
-        filterPredicate={(client, query) =>
-          client.nombre.toLowerCase().includes(query.toLowerCase()) ||
-          client.cedula.includes(query)
-        }
-        renderItem={renderClient}
-      />
-      <FloatingMenu
-        visible={menuVisible}
-        onClose={() => setMenuVisible(false)}
-        routes={[
-          { url: "/crearHistoria", text: "Crear historia" },
-          { url: "/crearCliente", text: "Crear cliente" },
-        ]}
-      />
-      <View className="absolute bottom-0 right-0 mt-[4%] mr-4">
+
+        <FloatingMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+          routes={[
+            { url: "/crearHistoria", text: "Crear historia" },
+            { url: "/crearCliente", text: "Crear cliente" },
+          ]}
+        />
+      </ScrollView>
+
+      <View className="absolute bottom-0 right-0 mb-4 mr-4">
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
           <Ionicons name="add-circle" size={60} color="#1769AA" />
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 }
