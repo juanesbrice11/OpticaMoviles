@@ -43,7 +43,7 @@ const GlassesDetail = ({ id, name, material, price, stock, imageUri }: CardProps
                 className="flex-1 items-center justify-center bg-white p-4"
                 resizeMode="stretch"
             >
-                    <View className="w-80 bg-blue rounded-2xl shadow-lg p-5 items-center">
+                    <View className="w-80 bg-primary rounded-2xl shadow-lg p-5 items-center">
                         <View className="w-45 h-45 rounded-[100] bg-white items-center justify-center">
                             <Image
                                 source={imageUri}

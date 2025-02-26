@@ -72,7 +72,7 @@ export function FormComponent<TSchema extends FieldValues>({
         </Pressable>
 
         <Pressable
-          className="bg-blue rounded-md w-20 py-3 items-center"
+          className="bg-primary rounded-md w-20 py-3 items-center"
           onPress={handleSubmit(onSubmit)}
         >
           <Text className="text-white font-bold">{buttonAccept}</Text>
