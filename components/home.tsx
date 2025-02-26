@@ -12,18 +12,18 @@ const Home = () => {
   const [menuVisible, setMenuVisible] = useState(false);
 
   return (
-    <View className="flex-1 bg-white relative">
+    <View className="flex-1 bg-white">
+      <View className="items-center">
+        <Image
+          source={require("@/assets/images/top.png")}
+          className="w-full h-44"
+        />
+      </View>
+      <Text className={`${texttitile}`}>Inventario</Text>
       <ScrollView>
-        <View className="items-center">
-          <Image
-            source={require("@/assets/images/top.png")}
-            className="w-full h-44"
-          />
-        </View>
-        <View className="items-center mt-[8%]">
-          <Text className={`${texttitile}`}>Inventario</Text>
-        </View>
+
         <View className="flex flex-row flex-wrap justify-center p-4">
+
           {glassesData.map((item) => (
             <Link
               key={item.id}
@@ -43,8 +43,10 @@ const Home = () => {
               </Pressable>
             </Link>
           ))}
+
         </View>
       </ScrollView>
+
       <FloatingMenu
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
