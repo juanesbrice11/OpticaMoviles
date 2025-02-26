@@ -12,14 +12,15 @@ export default function TabNavigator() {
         tabBarStyle: { backgroundColor: "#1769AA", height: 80, borderRadius: 20, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 4, paddingTop: 10 }
       }}
     >
+
+
       <Tabs.Screen
         name="home"
         options={{
           title: "Inicio",
           tabBarIcon: ({ color, size }) => (
-            <TouchableOpacity>
-              <Ionicons name="home" size={size} color={color} />
-            </TouchableOpacity>
+            <Ionicons name="home" size={size} color={color} />
+
           ),
         }}
       />
@@ -29,9 +30,7 @@ export default function TabNavigator() {
         options={{
           title: "Clientes",
           tabBarIcon: ({ color, size }) => (
-            <TouchableOpacity>
-              <Ionicons name="person" size={size} color={color} />
-            </TouchableOpacity>
+            <Ionicons name="person" size={size} color={color} />
           ),
         }}
       />
@@ -41,12 +40,11 @@ export default function TabNavigator() {
         options={{
           title: "Ventas",
           tabBarIcon: ({ color, size }) => (
-            <TouchableOpacity>
-              <Ionicons name="bag-handle" size={size} color={color} />
-            </TouchableOpacity>
+            <Ionicons name="bag-handle" size={size} color={color} />
           ),
         }}
       />
+
     </Tabs>
   );
 }
