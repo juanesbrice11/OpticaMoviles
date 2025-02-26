@@ -24,7 +24,8 @@ export const clientSchema = z.object({
     lastname: z.string().nonempty("El campo es obligatorio").min(3, "El apellido debe tener al menos 3 caracteres"),
     email: z.string().nonempty("El campo es obligatorio").email("El email no es válido"),
     id: z.string().nonempty("El campo es obligatorio").min(6, "El id no es válido"),
-    phone: z.string().nonempty("El campo es obligatorio").min(10, "El número debe tener al menos 10 dígitos").max(10, "El número debe tener máximo 10 dígitos")
+    phone: z.string().nonempty("El campo es obligatorio").min(10, "El número debe tener al menos 10 dígitos").max(10, "El número debe tener máximo 10 dígitos"),
+    clinicalHistory: z.string().nonempty("El campo es obligatorio")
 });
 
 export type ClientSchema = z.infer<typeof clientSchema>;

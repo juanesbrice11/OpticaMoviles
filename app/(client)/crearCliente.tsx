@@ -1,5 +1,5 @@
 import React from "react";
-import CreateClientScreen from "@/components/createclientscreen";
+import CreateClientScreen from "@/components/CreateClientScreen";
 
 const Crear = () => {
   return <CreateClientScreen />;
