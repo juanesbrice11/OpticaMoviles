@@ -61,7 +61,7 @@ export default function CreateClientScreen() {
         />
       </View>
 
-      <Text className="text-2xl font-bold text-center mb-5 text-blue">
+      <Text className="text-2xl font-bold text-center mb-5 text-primary">
         Crear Clientes
       </Text>
 

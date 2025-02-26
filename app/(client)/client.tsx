@@ -32,7 +32,7 @@ export default function Client() {
           />
         </View>
 
-        <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-blue">
+        <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
           Clientes
         </Text>
 
