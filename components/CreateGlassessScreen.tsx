@@ -1,28 +1,10 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { z } from 'zod';
-
+import { GafasSchema, gafasSchema } from '@/types/schemas';
 import { FormComponent, FormField } from '@/components/Form';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const gafasSchema = z.object({
-    name: z
-        .string()
-        .nonempty('El campo es obligatorio')
-        .min(3, 'El nombre debe tener al menos 3 caracteres'),
-    imageUri: z
-        .string()
-        .nonempty('El campo es obligatorio')
-        .url('URL no válida'),
-    price: z
-        .string()
-        .nonempty('El campo es obligatorio'),
-    material: z.string().nonempty('El campo es obligatorio'),
-    id: z.string().nonempty('El campo es obligatorio'),
-    stock: z.string().nonempty('El campo es obligatorio')
-});
-
-type GafasSchema = z.infer<typeof gafasSchema>;
 
 const fields: FormField<GafasSchema>[] = [
     {
@@ -66,7 +48,30 @@ const fields: FormField<GafasSchema>[] = [
 export default function CrearGafa() {
     const router = useRouter();
 
+    const storeData = async (value: GafasSchema) => {
+        try {
+            const glass = JSON.stringify(value);
+            await AsyncStorage.setItem('my-glass', glass);
+        } catch (e) {
+            console.log('Error al guardar las gafas:', e);
+        }
+    }
+
+    const getData = async () => {
+        try {
+            const glasses = await AsyncStorage.getItem('my-glass');            
+            return glasses;
+        } catch (e) {
+            console.log('Error al obtener las gafas:', e);
+        }
+    };
+
     const onSubmit = (data: GafasSchema) => {
+        storeData(data);
+        getData().then((glasses) => {
+            console.log('Gafas guardadas en el storage:', glasses);
+        });
+        
         const numericPrice = Number(data.price);
         const numericStock = Number(data.stock);
         console.log('Nueva gafa:', {
@@ -101,6 +106,6 @@ export default function CrearGafa() {
                 onCancel={onCancel}
             />
         </View>
-        
+
     );
 }

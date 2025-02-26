@@ -1,4 +1,3 @@
-// FormComponent.tsx
 import React from 'react';
 import { View, Text, TextInput, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
 import { z } from 'zod';

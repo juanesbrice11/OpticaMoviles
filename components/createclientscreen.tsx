@@ -1,12 +1,11 @@
-// CreateClientScreen.tsx
 import React from "react";
 import { View, Text, Image, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { z } from "zod";
-
-import { FormComponent } from "./Form"; 
+import { FormComponent } from "./Form";
 import { ClientSchema } from "@/types/api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const createClientSchema: z.ZodType<ClientSchema> = z.object({
@@ -38,15 +37,33 @@ const createClientSchema: z.ZodType<ClientSchema> = z.object({
 export default function CreateClientScreen() {
   const router = useRouter();
 
+  const storeData = async (value: ClientSchema) => {
+    try {
+      const client = JSON.stringify(value);
+      await AsyncStorage.setItem('my-client', client);
+    } catch (e) {
+
+    }
+  }
+
+  const getData = async () => {
+    try {
+      const client = await AsyncStorage.getItem('my-client');
+      return client != null ? JSON.parse(client) : null;
+    } catch (e) {
+    }
+  };
+
   const handleCancel = () => {
     router.push("/client");
   };
 
   const handleSubmit = (data: ClientSchema) => {
-    Alert.alert(
-      "Cliente creado",
-      `La creación del cliente fue exitosa. Cédula: ${data.cedula}`
-    );
+    storeData(data);
+    getData().then((client) => {
+      console.log("Datos del nuevo cliente:", client);
+    });
+
     console.log("Datos del nuevo cliente:", data);
 
     router.push("/client");
@@ -98,6 +115,12 @@ export default function CreateClientScreen() {
             placeholder: "Celular",
             label: "Celular",
           },
+          {
+            name: "historiaClinica",
+            type: "historiaClinica",
+            placeholder: "Historia Clínica",
+            label: "Historia Clínica",
+          }
         ]}
         buttonAccept="Aceptar"
         buttonCancel="Cancelar"
@@ -107,7 +130,7 @@ export default function CreateClientScreen() {
       <View className="items-center bottom-0">
         <Image
           source={require("@/assets/images/abajo.png")}
-          className="w-full h-44"
+          className="w-full"
         />
       </View>
     </SafeAreaView>
