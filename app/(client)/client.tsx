@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClientSchema } from "@/types/api";
+import { texttitile } from "@/components/tokens";
 
 import GenericSearchBar from "@/components/SearchBar";
 import ClientListItem from "@/components/ClientListItem";
@@ -32,7 +33,7 @@ export default function Client() {
           />
         </View>
 
-        <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
+        <Text className={`${texttitile}`}>
           Clientes
         </Text>
 
