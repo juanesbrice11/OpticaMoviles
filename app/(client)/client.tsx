@@ -45,8 +45,8 @@ export default function Client() {
           }
           renderItem={renderClient}
         />
-
-        <FloatingMenu
+      </ScrollView>
+      <FloatingMenu
           visible={menuVisible}
           onClose={() => setMenuVisible(false)}
           routes={[
@@ -54,8 +54,6 @@ export default function Client() {
             { url: "/crearCliente", text: "Crear cliente" },
           ]}
         />
-      </ScrollView>
-
       <View className="absolute bottom-0 right-0 mb-4 mr-4">
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
           <Ionicons name="add-circle" size={60} color="#1769AA" />

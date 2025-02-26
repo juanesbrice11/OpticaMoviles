@@ -20,7 +20,7 @@ const Home = () => {
           />
         </View>
         <View className="items-center mt-[8%]">
-          <Text className="text-2xl font-bold text-primary">inventario</Text>
+          <Text className="text-2xl font-bold text-primary">Inventario</Text>
         </View>
         <View className="flex flex-row flex-wrap justify-center p-4">
           {glassesData.map((item) => (
@@ -43,15 +43,14 @@ const Home = () => {
             </Link>
           ))}
         </View>
-
-        <FloatingMenu
-          visible={menuVisible}
-          onClose={() => setMenuVisible(false)}
-          routes={[
-            { url: "/crearGafa", text: "Crear Gafa" },
-          ]}
-        />
       </ScrollView>
+      <FloatingMenu
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        routes={[
+          { url: "/crearGafa", text: "Crear Gafa" },
+        ]}
+      />
       <View className="absolute bottom-0 right-0 mb-4 mr-4">
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
           <Ionicons name="add-circle" size={60} color="#1769AA" />
