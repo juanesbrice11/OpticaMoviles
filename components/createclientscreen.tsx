@@ -54,7 +54,7 @@ export default function CreateClientScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="items-center mb-7">
+      <View className="items-center mb-[10%]">
         <Image
           source={require("@/assets/images/top.png")}
           className="w-full h-44"
@@ -104,12 +104,6 @@ export default function CreateClientScreen() {
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       />
-      <View className="items-center bottom-0">
-        <Image
-          source={require("@/assets/images/abajo.png")}
-          className="w-full h-44"
-        />
-      </View>
     </SafeAreaView>
   );
 }

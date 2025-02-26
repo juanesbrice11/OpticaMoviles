@@ -33,7 +33,7 @@ export default function Login() {
       <ImageBackground
         source={require("@/assets/images/background.png")}
         className="flex-1"
-        resizeMode="cover"
+        resizeMode="stretch"
       >
 
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
