@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Card from "@/components/Card";
 import { glassesData } from "@/app/(glasses)/glassessData";
 import FloatingMenu from "./FloatingMenu";
+import { texttitile } from "./tokens";
 
 const Home = () => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -20,7 +21,7 @@ const Home = () => {
           />
         </View>
         <View className="items-center mt-[8%]">
-          <Text className="text-2xl font-bold text-primary">Inventario</Text>
+          <Text className={`${texttitile}`}>Inventario</Text>
         </View>
         <View className="flex flex-row flex-wrap justify-center p-4">
           {glassesData.map((item) => (

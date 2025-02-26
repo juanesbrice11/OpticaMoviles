@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClientSchema } from "@/types/api";
+import { texttitile } from "@/components/tokens";
 
 import GenericSearchBar from "@/components/SearchBar";
 import ClientListItem from "@/components/ClientListItem";
@@ -24,18 +25,18 @@ export default function Client() {
 
   return (
     <View className="flex-1 bg-white relative">
-      <ScrollView>
-        <View className="items-center">
-          <Image
-            source={require("@/assets/images/top.png")}
-            className="w-full h-44"
-          />
-        </View>
+      <Image
+        source={require("@/assets/images/top.png")}
+        className="w-full h-44"
+      />
 
-        <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
+
+        <Text className={`${texttitile}`}>
           Clientes
         </Text>
 
+
+      <View className="px-4 mt-4">
         <GenericSearchBar<ClientSchema>
           data={clients}
           placeholder="Buscar clientes..."
@@ -45,20 +46,39 @@ export default function Client() {
           }
           renderItem={renderClient}
         />
-      </ScrollView>
-      <FloatingMenu
-          visible={menuVisible}
-          onClose={() => setMenuVisible(false)}
-          routes={[
-            { url: "/crearHistoria", text: "Crear historia" },
-            { url: "/crearCliente", text: "Crear cliente" },
-          ]}
-        />
-      <View className="absolute bottom-0 right-0 mb-4 mr-4">
-        <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
-          <Ionicons name="add-circle" size={60} color="#1769AA" />
-        </TouchableOpacity>
       </View>
+
+      <ScrollView className="mt-4 px-4">
+        {clients.map((client) => (
+          <View
+            key={client.id}
+            className="bg-white rounded-xl border-2 border-primary shadow-lg shadow-gray-400 p-4 mb-4"
+          >
+            <Text className="text-lg font-bold text-gray-800">
+              {client.nombre} {client.apellido}
+            </Text>
+            <Text className="text-sm text-gray-600">Cédula: {client.cedula}</Text>
+            <Text className="text-sm text-gray-600">Teléfono: {client.telefono}</Text>
+            <Text className="text-sm text-gray-600">Email: {client.email}</Text>
+          </View>
+        ))}
+      </ScrollView>
+
+      <FloatingMenu
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        routes={[
+          { url: "/crearHistoria", text: "Crear historia" },
+          { url: "/crearCliente", text: "Crear cliente" },
+        ]}
+      />
+
+      <TouchableOpacity
+        className="absolute bottom-6 right-6"
+        onPress={() => setMenuVisible(!menuVisible)}
+      >
+        <Ionicons name="add-circle" size={60} color="#1769AA" />
+      </TouchableOpacity>
     </View>
   );
 }

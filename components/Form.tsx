@@ -3,6 +3,7 @@ import { View, Text, TextInput, KeyboardAvoidingView, Platform, Pressable, Touch
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { baseinput, cancelbutton, acceptbutton } from './tokens';
 
 export interface FormField<TSchema> {
   name: string;
@@ -52,7 +53,7 @@ export function FormComponent<TSchema extends FieldValues>({
               <View className="w-11/12 mb-4" key={field.name}>
                 <Text className="text-gray-700 mb-1">{field.label}</Text>
                 <TextInput
-                  className="border border-gray-300 p-2 rounded-lg"
+                  className={baseinput}
                   placeholder={field.placeholder}
                   value={String(watch(field.type as Path<TSchema>) ?? '')}
                   onChangeText={(text) =>
@@ -70,14 +71,14 @@ export function FormComponent<TSchema extends FieldValues>({
 
             <View className="flex-row w-11/12 mt-4 justify-end gap-2">
               <Pressable
-                className="bg-red-500 rounded-md w-20 py-3 items-center"
+                className={cancelbutton}
                 onPress={() => (onCancel ? onCancel() : null)}
               >
                 <Text className="text-white font-bold">{buttonCancel}</Text>
               </Pressable>
 
               <Pressable
-                className="bg-primary rounded-md w-20 py-3 items-center"
+                className={acceptbutton}
                 onPress={handleSubmit(onSubmit)}
               >
                 <Text className="text-white font-bold">{buttonAccept}</Text>
