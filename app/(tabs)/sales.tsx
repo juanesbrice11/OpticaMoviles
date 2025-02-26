@@ -25,13 +25,13 @@ export default function SalesScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="items-center mb-3">
+      <View className="items-center">
         <Image
           source={require("@/assets/images/top.png")}
           className="w-full h-44"
         />
       </View>
-      <Text className="text-2xl font-bold text-center text-blue mt-4">Sales</Text>
+      <Text className="text-2xl font-bold text-center text-primary mt-[8%]">Sales</Text>
       <ScrollView className="w-full">
         {sales.map((sale) => (
           <SalesViewerComponent key={sale.id} {...sale} />

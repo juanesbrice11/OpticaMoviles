@@ -33,7 +33,7 @@ export default function Login() {
       <ImageBackground
         source={require("@/assets/images/background.png")}
         className="flex-1"
-        resizeMode="cover"
+        resizeMode="stretch"
       >
 
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -63,7 +63,7 @@ export default function Login() {
               </Text>
 
               <Pressable
-                className="w-11/12 bg-blue py-3 rounded-2xl items-center mt-2"
+                className="w-11/12 bg-primary py-3 rounded-2xl items-center mt-2"
                 onPress={handleLogin}
               >
                 <Text className="text-lg font-bold text-gray-300">Sign in</Text>

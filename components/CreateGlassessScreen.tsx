@@ -95,7 +95,7 @@ export default function CrearGafa() {
                     className="w-full h-44"
                 />
             </View>
-            <Text className="text-2xl font-bold text-center mb-5 text-blue">Crear Gafa</Text>
+            <Text className="text-2xl font-bold text-center mb-5 text-primary">Crear Gafa</Text>
 
             <FormComponent<GafasSchema>
                 schema={gafasSchema}
