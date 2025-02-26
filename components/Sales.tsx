@@ -32,14 +32,15 @@ export default function Sales() {
         className="w-full h-44"
       />
 
-      <View className="items-center">
-      </View>
-      <Text className="text-2xl font-bold text-center text-primary mt-[8%]">Sales</Text>
+      <Text className="text-2xl font-bold text-center text-primary mt-[8%] mb-5">Sales</Text>
       <ScrollView className="w-full">
-        {sales.map((sale) => (
-          <SalesViewerComponent key={sale.id} {...sale} />
-        ))}
+        <View className="items-center">
+          {sales.map((sale) => (
+            <SalesViewerComponent key={sale.id} {...sale} />
+          ))}
+        </View>
       </ScrollView>
+
     </View>
   );
 }
