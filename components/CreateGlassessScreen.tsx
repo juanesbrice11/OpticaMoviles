@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { GafasSchema, gafasSchema } from '@/types/schemas';
 import { FormComponent, FormField } from '@/components/Form';
 import AsyncStorage from '@react-native-async-storage/async-storage';
