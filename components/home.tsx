@@ -15,7 +15,7 @@ const Home = () => {
                 />
             </View>
             <View className="items-center mt-[8%]">
-                <Text className="text-2xl font-bold text-blue">inventario</Text>
+                <Text className="text-2xl font-bold text-primary">inventario</Text>
             </View>
             <View className="flex flex-row flex-wrap justify-center p-4">
                 {glassesData.map((item) => (

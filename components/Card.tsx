@@ -5,7 +5,7 @@ import { CardProps } from '@/types/api';
 
 export default function Card({ name, imageUri, price, material, id, stock }: CardProps) {
   return (
-    <View className="rounded-[18px] border-[2px] border-blue bg-white shadow-[0px 4px 4px 0px] shadow-blue w-[135px] h-[200px] m-2 items-center p-2">
+    <View className="rounded-[18px] border-[2px] border-primary bg-white shadow-[0px 4px 4px 0px] shadow-primary w-[135px] h-[200px] m-2 items-center p-2">
         <Text className="text-base font-bold mt-2 numberOfLines={1}">{name}</Text>
         <View className="w-[80px] h-[80px]">
         <Image
