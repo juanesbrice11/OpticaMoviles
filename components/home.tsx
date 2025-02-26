@@ -1,11 +1,15 @@
-import { View, Text, ScrollView, Image, Pressable } from "react-native";
+import { View, Text, ScrollView, Image, Pressable, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import Card from '@/components/Card';
-import { glassesData } from '@/app/(home)/glassessData';
-import GenericSearchBar from "@/components/SearchBar";
-import { CardProps } from "@/types/api";
+import { glassesData } from '@/app/(glasses)/glassessData';
+import { Ionicons } from "@expo/vector-icons";
+import FloatingMenu from "./FloatingMenu";
+import { useState } from "react";
 
 const Home = () => {
+
+    const [menuVisible, setMenuVisible] = useState(false);
+
     return (
         <ScrollView className="flex-1 bg-white">
             <View className="items-center">
@@ -37,6 +41,18 @@ const Home = () => {
                         </Pressable>
                     </Link>
                 ))}
+            </View>
+            <FloatingMenu
+                visible={menuVisible}
+                onClose={() => setMenuVisible(false)}
+                routes={[
+                    { url: "/crearGafa", text: "Crear Gafa" }
+                ]}
+            />
+            <View className="absolute bottom-0 right-0 mb-4 mr-4">
+                <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+                    <Ionicons name="add-circle" size={60} color="#1769AA" />
+                </TouchableOpacity>
             </View>
         </ScrollView>
     )

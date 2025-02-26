@@ -14,8 +14,7 @@ const HistoriaClinica = () => {
     return (
         <SafeAreaView className="flex-1 bg-white">
             <ScrollView className="flex-1 px-4 py-6">
-
-               
+                <Text>holi</Text>               
             </ScrollView>
         </SafeAreaView>
     );
