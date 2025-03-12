@@ -1,20 +1,21 @@
-import React from "react";
-import { View, Text, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { FormComponent, FormField } from "./Form";
-import { ClientSchema, clientSchema } from "@/types/schemas";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ClientBd } from "@/types/api";
+import { clientSchema, ClientSchema } from "@/types/schemas";
+import { createClient } from "@/services/clientsService";
 import { texttitile } from "./tokens";
 
 const fields: FormField<ClientSchema>[] = [
   {
-    name: "nombre",
+    name: "name",
     type: "name",
     placeholder: "Nombre",
     label: "Nombre",
   },
   {
-    name: "apellido",
+    name: "lastname",
     type: "lastname",
     placeholder: "Apellido",
     label: "Apellido",
@@ -26,57 +27,56 @@ const fields: FormField<ClientSchema>[] = [
     label: "Email",
   },
   {
-    name: "cedula",
+    name: "id",
     type: "id",
     placeholder: "Cédula",
     label: "Cédula",
   },
   {
-    name: "telefono",
+    name: "phone",
     type: "phone",
     placeholder: "Teléfono",
     label: "Teléfono",
   },
-  {
-    name: "historiaClinica",
-    type: "clinicalHistory",
-    placeholder: "Historia Clínica",
-    label: "Historia Clínica",
-  },
 ];
 
-export default function 
-CreateClientScreen() {
+export default function CreateClientScreen() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const storeData = async (value: ClientSchema) => {
+  const onSumbit = async (data: ClientSchema) => {
+    console.log("data", data);
+    
     try {
-      const client = JSON.stringify(value);
-      await AsyncStorage.setItem('my-client', client);
-    } catch (e) {
-
+      setIsLoading(true);
+      console.log("Intentando crear cliente...");
+      await createClient({
+        id: data.id,
+        name: data.name,
+        lastname: data.lastname,
+        email: data.email,
+        phone: data.phone,
+      });
+      console.log("Cliente creado exitosamente");
+      router.push("/client");
+    } catch (error) {
+      console.error("Error al crear el cliente:", error);
+      // Aquí podrías mostrar un mensaje de error al usuario
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const getData = async () => {
-    try {
-      const client = await AsyncStorage.getItem('my-client');
-      return client;
-    } catch (e) {
-      console.log('Error al obtener el cliente:', e);
-    }
-  };
-
-  const onSumbit = (data: ClientSchema) => {
-    storeData(data);
-    getData().then((client) => {
-      console.log("Datos del nuevo cliente:", client);
-    });
-    router.push("/client");
   };
 
   const onCancel = () => {
     router.push("/client");
+  }
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#1769AA" />
+      </View>
+    );
   }
 
   return (

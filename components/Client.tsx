@@ -1,24 +1,48 @@
-import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ClientSchema } from "@/types/api";
+import { ClientBd } from "@/types/api";
 
 import GenericSearchBar from "@/components/SearchBar";
 import ClientListItem from "@/components/ClientListItem";
 import FloatingMenu from "@/components/FloatingMenu";
+import { getClients } from "@/services/clientsService";
 
 export default function Client() {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [clients, setClients] = useState<ClientBd[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const clients: ClientSchema[] = [
-    { id: "1", cedula: "123456789", nombre: "Juan", apellido: "Pérez", telefono: "555-1234", email: "juan.perez@example.com", historiaClinica: "Historia 1" },
-    { id: "2", cedula: "987654321", nombre: "Ana", apellido: "Gómez", telefono: "555-5678", email: "ana.gomez@example.com", historiaClinica: "Historia 2" },
-    { id: "3", cedula: "456789123", nombre: "Carlos", apellido: "Ruiz", telefono: "555-9012", email: "carlos.ruiz@example.com", historiaClinica: "Historia 3" },
-    { id: "4", cedula: "321654987", nombre: "María", apellido: "López", telefono: "555-3456", email: "maria.lopez@example.com", historiaClinica: "Historia 4" },
-    { id: "5", cedula: "654987321", nombre: "Pedro", apellido: "Martínez", telefono: "555-7890", email: "pedro.martinez@example.com", historiaClinica: "Historia 5" },
-  ];
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const apiClients = await getClients();
+        const formattedClients: ClientBd[] = apiClients.map(client => ({
+          id: client.id,
+          name: client.name,
+          lastname: client.lastname,
+          phone: client.phone,
+          email: client.email,
+        }));
+        setClients(formattedClients);
+      } catch (error) {
+        console.error('Error al cargar clientes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchClients();
+  }, []);
 
-  const renderClient = ({ item }: { item: ClientSchema }) => (
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#1769AA" />
+      </View>
+    );
+  }
+
+  const renderClient = ({ item }: { item: ClientBd }) => (
     <ClientListItem client={item} />
   );
 
@@ -36,12 +60,12 @@ export default function Client() {
           Clientes
         </Text>
 
-        <GenericSearchBar<ClientSchema>
+        <GenericSearchBar<ClientBd>
           data={clients}
           placeholder="Buscar clientes..."
           filterPredicate={(client, query) =>
-            client.nombre.toLowerCase().includes(query.toLowerCase()) ||
-            client.cedula.includes(query)
+            client.name.toLowerCase().includes(query.toLowerCase()) ||
+            client.id.includes(query)
           }
           renderItem={renderClient}
         />

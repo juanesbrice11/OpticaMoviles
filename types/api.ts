@@ -1,13 +1,11 @@
 import { ImageSourcePropType } from 'react-native';
 
-export interface ClientSchema {
+export interface ClientBd {
     id: string;
-    cedula: string;
-    nombre: string;
-    apellido: string;
+    name: string;
+    lastname: string;
+    phone: string;
     email: string;
-    telefono: string;
-    historiaClinica: string;
   }
 export interface CardProps {
     name: string;
@@ -16,4 +14,4 @@ export interface CardProps {
     material: string;
     id: number;
     stock: number;
-  }
+}
