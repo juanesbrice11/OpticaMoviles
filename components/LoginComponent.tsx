@@ -13,7 +13,8 @@ import {
     Keyboard,
     Platform,
 } from "react-native";
-
+import { login } from "@/services/authService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function LoginComponent() {
     const router = useRouter();
 
@@ -27,9 +28,19 @@ export default function LoginComponent() {
         resolver: zodResolver(loginSchema),
     });
 
-    const onSubmit = (data: LoginSchema) => {
-        console.log(data);
-        router.push("/home");
+    const onSubmit = async (data: LoginSchema) => {
+        try {
+            
+            const response = await login(data);
+            AsyncStorage.setItem("access_token", response.access_token);
+            console.log("access_token", response.access_token);
+            
+
+            router.push("/home");
+        } catch (error) {
+            console.error(error);
+        }
+
     };
 
     return (

@@ -6,6 +6,7 @@ import { ClientBd } from "@/types/api";
 import { clientSchema, ClientSchema } from "@/types/schemas";
 import { createClient } from "@/services/clientsService";
 import { texttitile } from "./tokens";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const fields: FormField<ClientSchema>[] = [
   {
@@ -44,8 +45,26 @@ export default function CreateClientScreen() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
+  const storeData = async (data: ClientSchema) => {
+    try {
+      const clientData = JSON.stringify(data);
+      await AsyncStorage.setItem("client", clientData);
+    } catch (error) {
+      console.error("Error al almacenar el cliente:", error);
+    }
+  };
+
+  const getData = async () => {
+    try {
+      const clientData = await AsyncStorage.getItem("client");
+      return clientData;
+    } catch (error) {
+      console.error("Error al obtener el cliente:", error);
+    }
+  };
+
   const onSumbit = async (data: ClientSchema) => {
-    console.log("data", data);
+    storeData(data);
     
     try {
       setIsLoading(true);
@@ -61,7 +80,6 @@ export default function CreateClientScreen() {
       router.push("/client");
     } catch (error) {
       console.error("Error al crear el cliente:", error);
-      // Aquí podrías mostrar un mensaje de error al usuario
     } finally {
       setIsLoading(false);
     }
