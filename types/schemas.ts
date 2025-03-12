@@ -32,7 +32,7 @@ export type ClientSchema = z.infer<typeof clientSchema>;
 
 export const loginSchema = z.object({
     email: z.string().nonempty("El campo es obligatorio").email("El email no es válido"),
-    password: z.string().nonempty("El campo es obligatorio")
+    password: z.string().nonempty("El campo es obligatorio").min(8, "La contraseña debe tener al menos 8 caracteres").max(40, "La contraseña debe tener máximo 40 caracteres")
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>;

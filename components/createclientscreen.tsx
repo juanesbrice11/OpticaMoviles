@@ -45,7 +45,8 @@ const fields: FormField<ClientSchema>[] = [
   },
 ];
 
-export default function CreateClientScreen() {
+export default function 
+CreateClientScreen() {
   const router = useRouter();
 
   const storeData = async (value: ClientSchema) => {

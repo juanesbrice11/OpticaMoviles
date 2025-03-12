@@ -33,7 +33,6 @@ export default function LoginComponent() {
     };
 
     return (
-
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             className="flex-1"
@@ -43,7 +42,6 @@ export default function LoginComponent() {
                 className="flex-1"
                 resizeMode="cover"
             >
-
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View className="flex-1 justify-center items-center px-5 pt-48">
                         <TextInput
@@ -55,6 +53,8 @@ export default function LoginComponent() {
                             onChangeText={(text) => setValue("email", text)}
                             {...register("email")}
                             placeholderTextColor="#5F5F5F"
+                            maxLength={255}
+
                         />
                         <Text className="w-11/12 text-xs text-gray-500 text-left mt-2 mb-2">
                             {errors.email?.message}
@@ -68,11 +68,11 @@ export default function LoginComponent() {
                             onChangeText={(text) => setValue("password", text)}
                             {...register("password")}
                             placeholderTextColor="#5F5F5F"
+                            maxLength={40}
                         />
                         <Text className="w-11/12 text-xs text-gray-500 text-left mt-2 mb-2">
                             {errors.password?.message}
                         </Text>
-
 
                         <Text className="text-base font-normal text-gray-500 self-end mr-10 mb-5">
                             Forgot password?

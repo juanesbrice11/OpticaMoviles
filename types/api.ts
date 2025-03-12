@@ -10,10 +10,10 @@ export interface ClientSchema {
     historiaClinica: string;
   }
 export interface CardProps {
-  name: string;
-  imageUri: ImageSourcePropType;
-  price: number;
-  material: string;
-  id: string | number;
-  stock: number;
-}
+    name: string;
+    imageUri: string;
+    price: number;
+    material: string;
+    id: number;
+    stock: number;
+  }

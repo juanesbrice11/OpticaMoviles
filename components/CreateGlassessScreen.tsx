@@ -1,112 +1,148 @@
-import React from 'react';
-import { View, Text, Image } from 'react-native';
-import { useRouter } from 'expo-router';
-import { GafasSchema, gafasSchema } from '@/types/schemas';
-import { FormComponent, FormField } from '@/components/Form';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { texttitile } from './tokens';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, Platform } from 'react-native';
+import { router } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import { createGlasses } from '@/services/glassesService';
 
 
-const fields: FormField<GafasSchema>[] = [
-    {
-        name: 'name',
-        type: 'name',
-        placeholder: 'Nombre de la gafa',
-        label: 'Nombre',
-    },
-    {
-        name: 'imageUri',
-        type: 'imageUri',
-        placeholder: 'URL de la imagen',
-        label: 'Imagen',
-    },
-    {
-        name: 'price',
-        type: 'price',
-        placeholder: 'Precio',
-        label: 'Precio',
-    },
-    {
-        name: 'material',
-        type: 'material',
-        placeholder: 'Material de la gafa',
-        label: 'Material',
-    },
-    {
-        name: 'id',
-        type: 'id',
-        placeholder: 'ID de la gafa',
-        label: 'ID',
-    },
-    {
-        name: 'stock',
-        type: 'stock',
-        placeholder: 'Stock disponible',
-        label: 'Stock',
-    },
-];
 
-export default function CrearGafa() {
-    const router = useRouter();
+export default function CreateGlassesScreen() {
+    const [formData, setFormData] = useState({
+        marca: '',
+        imagen: '',
+        precio: '',
+        material: '',
+        stock: ''
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const storeData = async (value: GafasSchema) => {
-        try {
-            const glass = JSON.stringify(value);
-            await AsyncStorage.setItem('my-glass', glass);
-        } catch (e) {
-            console.log('Error al guardar las gafas:', e);
-        }
-    }
-
-    const getData = async () => {
-        try {
-            const glasses = await AsyncStorage.getItem('my-glass');            
-            return glasses;
-        } catch (e) {
-            console.log('Error al obtener las gafas:', e);
-        }
-    };
-
-    const onSubmit = (data: GafasSchema) => {
-        storeData(data);
-        getData().then((glasses) => {
-            console.log('Gafas guardadas en el storage:', glasses);
-        });
+    const pickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         
-        const numericPrice = Number(data.price);
-        const numericStock = Number(data.stock);
-        console.log('Nueva gafa:', {
-            ...data,
-            price: numericPrice,
-            stock: numericStock,
+        if (status !== 'granted') {
+            alert('Sorry, we need camera roll permissions to make this work!');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: "images",
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+            base64: true
         });
 
-        router.push('/home');
+        if (!result.canceled) {
+            const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+            setFormData(prev => ({ ...prev, imagen: base64Image }));
+        }
     };
 
-    const onCancel = () => {
-        router.push('/home');
+    const handleSubmit = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            if (!formData.marca || !formData.imagen || !formData.precio || !formData.material || !formData.stock) {
+                throw new Error('Todos los campos son requeridos');
+            }
+
+            const glassesData = {
+                marca: formData.marca,
+                imagen: formData.imagen,
+                precio: Number(formData.precio),
+                material: formData.material,
+                stock: Number(formData.stock)
+            };
+
+            await createGlasses(glassesData);
+            router.push('/home'); 
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error al crear la gafa');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <View className="flex-1 bg-white">
-            <View className="items-center mb-7">
-                <Image
-                    source={require("@/assets/images/top.png")}
-                    className="w-full h-44"
-                />
+        <View className="flex-1 bg-white p-4">
+            <Text className="text-2xl font-bold mb-6">Crear Nueva Gafa</Text>
+
+            <View className="space-y-4">
+                <View>
+                    <Text className="text-gray-600 mb-1">Marca</Text>
+                    <TextInput
+                        className="border border-gray-300 rounded-lg p-2"
+                        value={formData.marca}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, marca: text }))}
+                        placeholder="Ingrese la marca"
+                    />
+                </View>
+
+                <View>
+                    <Text className="text-gray-600 mb-1">Imagen</Text>
+                    <TouchableOpacity 
+                        onPress={pickImage}
+                        className="border border-gray-300 rounded-lg p-2 items-center"
+                    >
+                        {formData.imagen ? (
+                            <Image 
+                                source={{ uri: formData.imagen }} 
+                                className="w-32 h-32 rounded-lg"
+                            />
+                        ) : (
+                            <Text>Seleccionar imagen</Text>
+                        )}
+                    </TouchableOpacity>
+                </View>
+
+                <View>
+                    <Text className="text-gray-600 mb-1">Precio</Text>
+                    <TextInput
+                        className="border border-gray-300 rounded-lg p-2"
+                        value={formData.precio}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, precio: text }))}
+                        placeholder="Ingrese el precio"
+                        keyboardType="numeric"
+                    />
+                </View>
+
+                <View>
+                    <Text className="text-gray-600 mb-1">Material</Text>
+                    <TextInput
+                        className="border border-gray-300 rounded-lg p-2"
+                        value={formData.material}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, material: text }))}
+                        placeholder="Ingrese el material"
+                    />
+                </View>
+
+                <View>
+                    <Text className="text-gray-600 mb-1">Stock</Text>
+                    <TextInput
+                        className="border border-gray-300 rounded-lg p-2"
+                        value={formData.stock}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, stock: text }))}
+                        placeholder="Ingrese el stock"
+                        keyboardType="numeric"
+                    />
+                </View>
+
+                {error && (
+                    <Text className="text-red-500">{error}</Text>
+                )}
+
+                <TouchableOpacity
+                    onPress={handleSubmit}
+                    disabled={loading}
+                    className={`bg-blue-500 p-3 rounded-lg items-center ${loading ? 'opacity-50' : ''}`}
+                >
+                    <Text className="text-white font-bold">
+                        {loading ? 'Creando...' : 'Crear Gafa'}
+                    </Text>
+                </TouchableOpacity>
             </View>
-            <Text className={`${texttitile}`}>Crear Gafa</Text>
-
-            <FormComponent<GafasSchema>
-                schema={gafasSchema}
-                fields={fields}
-                buttonAccept="Guardar"
-                buttonCancel="Cancelar"
-                onSubmit={onSubmit}
-                onCancel={onCancel}
-            />
         </View>
-
     );
 }

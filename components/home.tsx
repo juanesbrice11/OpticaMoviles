@@ -1,15 +1,42 @@
 import { View, Text, ScrollView, Image, Pressable, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
 import Card from "@/components/Card";
-import { glassesData } from "@/app/(glasses)/glassessData";
 import FloatingMenu from "./FloatingMenu";
 import { texttitile } from "./tokens";
+import { getGlasses } from "@/services/glassesService";
+
+interface Glasses {
+  id: number;
+  marca: string;
+  imagen: string;
+  precio: number;
+  material: string;
+  stock: number;
+}
 
 const Home = () => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [glasses, setGlasses] = useState<Glasses[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGlasses = async () => {
+      try {
+        const data = await getGlasses();
+        setGlasses(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        setLoading(false);
+      }
+    };
+
+    fetchGlasses();
+  }, []);
 
   return (
     <View className="flex-1 bg-white">
@@ -21,30 +48,33 @@ const Home = () => {
       </View>
       <Text className={`${texttitile}`}>Inventario</Text>
       <ScrollView>
-
-        <View className="flex flex-row flex-wrap justify-center p-4">
-
-          {glassesData.map((item) => (
-            <Link
-              key={item.id}
-              href={`/${item.id}`}
-              asChild
-            >
-              <Pressable>
-                <Card
-                  key={item.id}
-                  name={item.name}
-                  imageUri={item.imageUri}
-                  price={item.price}
-                  material={item.material}
-                  id={item.id}
-                  stock={item.stock}
-                />
-              </Pressable>
-            </Link>
-          ))}
-
-        </View>
+        {loading ? (
+          <Text className="text-center mt-4">Cargando...</Text>
+        ) : error ? (
+          <Text className="text-center mt-4 text-red-500">Error: {error}</Text>
+        ) : (
+          <View className="flex flex-row flex-wrap justify-center p-4">
+            {glasses.map((item) => (
+              <Link
+                key={item.id}
+                href={`/${item.id}`}
+                asChild
+              >
+                <Pressable>
+                  <Card
+                    key={item.id}
+                    name={item.marca}
+                    imageUri={item.imagen}
+                    price={item.precio}
+                    material={item.material}
+                    id={item.id}
+                    stock={item.stock}
+                  />
+                </Pressable>
+              </Link>
+            ))}
+          </View>
+        )}
       </ScrollView>
 
       <FloatingMenu
