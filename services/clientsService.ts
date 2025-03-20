@@ -1,4 +1,5 @@
 import { ClientBd } from "@/types/api";
+import { URL } from "@/types/api";
 
 interface ClientResponse {
     statusCode: number;
@@ -6,11 +7,9 @@ interface ClientResponse {
     client: ClientBd;
 }
 
-const API_URL = 'http://172.20.10.2:3000/clients';
-
 export const getClients = async (): Promise<ClientBd[]> => {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(`${URL}/clients`);
         const data = await response.json();
         return data.clients;
     } catch (error) {
@@ -21,14 +20,14 @@ export const getClients = async (): Promise<ClientBd[]> => {
 
 export const createClient = async (clientData: ClientBd): Promise<ClientBd> => {
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(`${URL}/clients`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(clientData)
         });
-        
+
         if (!response.ok) {
             throw new Error('Error al crear el cliente');
         }

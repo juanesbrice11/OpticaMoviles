@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { URL } from '@/types/api';
 export interface Glasses {
   id: number;
   marca: string;
@@ -9,11 +9,9 @@ export interface Glasses {
   stock: number;
 }
 
-const API_URL = 'http://172.20.10.2:3000/glasses'; 
-
 export const getGlasses = async (): Promise<Glasses[]> => {
   try {
-    const response = await axios.get<Glasses[]>(API_URL);
+    const response = await axios.get<Glasses[]>(`${URL}/glasses`);
     return response.data;
   } catch (error) {
     console.error('Error fetching glasses:', error);
@@ -23,7 +21,8 @@ export const getGlasses = async (): Promise<Glasses[]> => {
 
 export const getGlassesById = async (id: number): Promise<Glasses> => {
   try {
-    const response = await axios.get<Glasses>(`${API_URL}/${id}`);
+    const response = await axios.get<Glasses>(`${URL}/glasses/${id}`);
+    
     return response.data;
   } catch (error) {
     console.error('Error fetching glasses by id:', error);
@@ -33,7 +32,7 @@ export const getGlassesById = async (id: number): Promise<Glasses> => {
 
 export const createGlasses = async (glassesData: Omit<Glasses, 'id'>): Promise<Glasses> => {
   try {
-    const response = await axios.post<Glasses>(API_URL, glassesData);
+    const response = await axios.post<Glasses>(`${URL}/glasses`, glassesData);
     return response.data;
   } catch (error) {
     console.error('Error creating glasses:', error);
