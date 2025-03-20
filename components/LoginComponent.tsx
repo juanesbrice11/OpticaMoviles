@@ -13,10 +13,14 @@ import {
     Keyboard,
     Platform,
 } from "react-native";
+import { useAuth } from "@/context/AuthContext";
+
 import { login } from "@/services/authService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
 export default function LoginComponent() {
     const router = useRouter();
+    const { onLogin } = useAuth();
 
     const {
         register,
@@ -31,12 +35,8 @@ export default function LoginComponent() {
     const onSubmit = async (data: LoginSchema) => {
         try {
             
-            const response = await login(data);
-            AsyncStorage.setItem("access_token", response.access_token);
-            console.log("access_token", response.access_token);
-            
-
-            router.push("/home");
+            const response = await onLogin!(data);
+            // router.replace("/(content)/(tabs)/home");
         } catch (error) {
             console.error(error);
         }

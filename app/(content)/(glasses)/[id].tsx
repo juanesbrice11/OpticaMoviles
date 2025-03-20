@@ -7,6 +7,7 @@ import type { Glasses } from "@/services/glassesService";
 
 export default function DetailScreen() {
   const { id } = useLocalSearchParams();
+  
   const numericId = Number(id);
   const [item, setItem] = useState<Glasses | null>(null);
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,7 @@ export default function DetailScreen() {
   useEffect(() => {
     const fetchGlasses = async () => {
       try {
+        
         const data = await getGlassesById(numericId);
         setItem(data);
         setLoading(false);

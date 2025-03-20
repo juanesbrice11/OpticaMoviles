@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Button } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClientBd } from "@/types/api";
 
@@ -7,8 +7,10 @@ import GenericSearchBar from "@/components/SearchBar";
 import ClientListItem from "@/components/ClientListItem";
 import FloatingMenu from "@/components/FloatingMenu";
 import { getClients } from "@/services/clientsService";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Client() {
+  const { onLogout } = useAuth();
   const [menuVisible, setMenuVisible] = useState(false);
   const [clients, setClients] = useState<ClientBd[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,20 +71,25 @@ export default function Client() {
           }
           renderItem={renderClient}
         />
+
+        <View className="items-center mt-4">
+          <Button title="Logout" onPress={onLogout} />
+        </View>
       </ScrollView>
       <FloatingMenu
-          visible={menuVisible}
-          onClose={() => setMenuVisible(false)}
-          routes={[
-            { url: "/crearHistoria", text: "Crear historia" },
-            { url: "/crearCliente", text: "Crear cliente" },
-          ]}
-        />
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        routes={[
+          { url: "/crearHistoria", text: "Crear historia" },
+          { url: "/crearCliente", text: "Crear cliente" },
+        ]}
+      />
       <View className="absolute bottom-0 right-0 mb-4 mr-4">
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
           <Ionicons name="add-circle" size={60} color="#1769AA" />
         </TouchableOpacity>
       </View>
+
     </View>
   );
 }

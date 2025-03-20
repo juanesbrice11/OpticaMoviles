@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, Image, Platform } from 'react-
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { createGlasses } from '@/services/glassesService';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { texttitile } from './tokens';
 
 
 
@@ -57,7 +59,7 @@ export default function CreateGlassesScreen() {
             };
 
             await createGlasses(glassesData);
-            router.push('/home'); 
+            router.push('/home');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error al crear la gafa');
         } finally {
@@ -66,10 +68,18 @@ export default function CreateGlassesScreen() {
     };
 
     return (
-        <View className="flex-1 bg-white p-4">
-            <Text className="text-2xl font-bold mb-6">Crear Nueva Gafa</Text>
+        <SafeAreaView className="flex-1 bg-white">
+            <View className="items-center mb-7">
+                <Image
+                    source={require("@/assets/images/top.png")}
+                    className="w-full h-44"
+                />
+            </View>
+            <Text className={`${texttitile}`}>
+                Crear nueva gafa
+            </Text>
 
-            <View className="space-y-4">
+            <View className="p-4 space-y-4">
                 <View>
                     <Text className="text-gray-600 mb-1">Marca</Text>
                     <TextInput
@@ -82,13 +92,13 @@ export default function CreateGlassesScreen() {
 
                 <View>
                     <Text className="text-gray-600 mb-1">Imagen</Text>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         onPress={pickImage}
                         className="border border-gray-300 rounded-lg p-2 items-center"
                     >
                         {formData.imagen ? (
-                            <Image 
-                                source={{ uri: formData.imagen }} 
+                            <Image
+                                source={{ uri: formData.imagen }}
                                 className="w-32 h-32 rounded-lg"
                             />
                         ) : (
@@ -143,6 +153,6 @@ export default function CreateGlassesScreen() {
                     </Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
