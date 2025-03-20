@@ -1,4 +1,4 @@
-import Client from "@/app/(client)/client";
+import Client from "@/app/(content)/(client)/client";
 
 export default function ClientScreen() {
   return (

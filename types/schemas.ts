@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export const Role = z.enum(['admin', 'secretary']);
+
 export const gafasSchema = z.object({
     name: z
         .string()
@@ -35,3 +37,13 @@ export const loginSchema = z.object({
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>;
+
+export const UserSchema = z.object({
+    id: z.string().nonempty("El campo es obligatorio"),
+    name: z.string().nonempty("El campo es obligatorio"),
+    email: z.string().nonempty("El campo es obligatorio"),
+    password: z.string().nonempty("El campo es obligatorio"),
+    role: Role.default('secretary')
+});
+
+export type UserSchema = z.infer<typeof UserSchema>;

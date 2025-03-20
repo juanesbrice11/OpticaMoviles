@@ -68,7 +68,6 @@ export default function CreateClientScreen() {
     
     try {
       setIsLoading(true);
-      console.log("Intentando crear cliente...");
       await createClient({
         id: data.id,
         name: data.name,
@@ -76,7 +75,6 @@ export default function CreateClientScreen() {
         email: data.email,
         phone: data.phone,
       });
-      console.log("Cliente creado exitosamente");
       router.push("/client");
     } catch (error) {
       console.error("Error al crear el cliente:", error);
