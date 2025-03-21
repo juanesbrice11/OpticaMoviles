@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator } from "react-native";
+import { View, Text, Image, ActivityIndicator, Button } from "react-native";
 import { useAuth } from "@/context/AuthContext";
 import { getUserById } from "@/services/usersService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { Ionicons } from "@expo/vector-icons";
+
 
 interface ProfileData {
   id: string;
@@ -14,6 +15,7 @@ interface ProfileData {
 }
 
 const Profile = () => {
+  const { onLogout } = useAuth();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -68,7 +70,14 @@ const Profile = () => {
         <Text className="text-gray-600">ID: {profileData.id}</Text>
         <Text className="text-gray-600">Rol: {profileData.role}</Text>
       </View>
+
+      <View className="items-center mt-4">
+        <Button title="Logout" onPress={onLogout} />
+      </View>
+      
     </View>
+
+    
   );
 };
 
