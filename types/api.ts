@@ -1,6 +1,4 @@
-import { API_URL, API_PORT } from '@env';
-
-export const URL = `http://${API_URL}:${API_PORT}`;
+export const URL = `http://${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_API_PORT}`;
 
 export interface ClientBd {
     id: string;
@@ -8,7 +6,8 @@ export interface ClientBd {
     lastname: string;
     phone: string;
     email: string;
-  }
+}
+
 export interface CardProps {
     name: string;
     imageUri: string;
