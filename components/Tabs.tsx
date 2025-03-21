@@ -76,9 +76,6 @@ export default function TabNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-circle-outline" size={size} color={color} />
           ),
-          href: authState?.role === "admin"
-            ? "/(content)/(tabs)/profile"
-            : null,
         }}
       />
     </Tabs>

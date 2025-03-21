@@ -72,9 +72,6 @@ export default function Client() {
           renderItem={renderClient}
         />
 
-        <View className="items-center mt-4">
-          <Button title="Logout" onPress={onLogout} />
-        </View>
       </ScrollView>
       <FloatingMenu
         visible={menuVisible}
