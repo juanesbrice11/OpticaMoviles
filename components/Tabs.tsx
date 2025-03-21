@@ -68,6 +68,19 @@ export default function TabNavigator() {
             : null,
         }}
       />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Perfil",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-circle-outline" size={size} color={color} />
+          ),
+          href: authState?.role === "admin"
+            ? "/(content)/(tabs)/profile"
+            : null,
+        }}
+      />
     </Tabs>
   );
 }
