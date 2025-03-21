@@ -44,4 +44,26 @@ export const registerUser = async (userData: { name: string; email: string; pass
     console.error('Error registering user:', error);
     throw error;
   }
+};
+
+export const getUserById = async (id: string) => {
+  try {
+    const response = await fetch(`${URL}/users/${id}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Server response:', errorData);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching user by ID:', error);
+    throw error;
+  }
 }; 

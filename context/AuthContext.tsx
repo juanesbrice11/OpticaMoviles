@@ -10,6 +10,7 @@ interface AuthProps {
     onRegister?: (data: UserSchema) => Promise<any>;
     onLogin?: (data: LoginSchema) => Promise<any>;
     onLogout?: () => void;
+    token?: string | null;
 }
 
 const AuthContext = createContext<AuthProps>({});
@@ -93,22 +94,22 @@ export const AuthProvider = ({ children }: any) => {
         }
     };
 
-        const Logout = async () => {
-            try {
-                await AsyncStorage.clear(); // 🔥 Limpia todo el AsyncStorage
-                setAuthState({ token: null, authenticated: false, loading: false, role: null });
-                router.replace("/(auth)/login");
-            } catch (error) {
-                console.error("Error al limpiar AsyncStorage:", error);
-            }
-        };
-    
+    const Logout = async () => {
+        try {
+            await AsyncStorage.clear();
+            setAuthState({ token: null, authenticated: false, loading: false, role: null });
+            router.replace("/(auth)/login");
+        } catch (error) {
+            console.error("Error al limpiar AsyncStorage:", error);
+        }
+    };
 
     const value = {
         onRegister: Register,
         onLogin: Login,
         onLogout: Logout,
-        authState
+        authState,
+        token: authState.token,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
