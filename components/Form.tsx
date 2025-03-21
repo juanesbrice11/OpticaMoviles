@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, KeyboardAvoidingView, Platform, Pressable, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
+import { View, Text, TextInput, KeyboardAvoidingView, Platform, Pressable, TouchableWithoutFeedback, Keyboard, ScrollView, Button } from 'react-native';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +10,7 @@ export interface FormField<TSchema> {
   type: keyof TSchema;
   placeholder: string;
   label: string;
+  secureTextEntry?: boolean;
 }
 
 import { FieldValues, Path } from 'react-hook-form';
@@ -23,14 +24,14 @@ interface FormComponentProps<TSchema extends FieldValues> {
   onCancel?: () => void;
 }
 
-export function FormComponent<TSchema extends FieldValues>({
+export const FormComponent = <TSchema extends FieldValues>({
   schema,
   fields,
   buttonAccept,
   buttonCancel,
   onSubmit,
   onCancel,
-}: FormComponentProps<TSchema>) {
+}: FormComponentProps<TSchema>) => {
   const {
     register,
     handleSubmit,
@@ -55,6 +56,7 @@ export function FormComponent<TSchema extends FieldValues>({
                 <TextInput
                   className={baseinput}
                   placeholder={field.placeholder}
+                  secureTextEntry={field.secureTextEntry}
                   value={String(watch(field.type as Path<TSchema>) ?? '')}
                   onChangeText={(text) =>
                     setValue(field.type as Path<TSchema>, text as any)
@@ -89,4 +91,4 @@ export function FormComponent<TSchema extends FieldValues>({
       </ScrollView>
     </KeyboardAvoidingView>
   );
-}
+};

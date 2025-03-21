@@ -38,12 +38,13 @@ export const loginSchema = z.object({
 
 export type LoginSchema = z.infer<typeof loginSchema>;
 
-export const UserSchema = z.object({
-    id: z.string().nonempty("El campo es obligatorio"),
-    name: z.string().nonempty("El campo es obligatorio"),
-    email: z.string().nonempty("El campo es obligatorio"),
-    password: z.string().nonempty("El campo es obligatorio"),
-    role: Role.default('secretary')
+export const userSchema = z.object({
+    id: z.string().nonempty("La cédula es requerida"),
+    name: z.string().nonempty("El nombre es requerido"),
+    email: z.string().email("El email no es válido"),
+    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+    confirmPassword: z.string().min(6, "La confirmación de la contraseña debe tener al menos 6 caracteres"),
+    role: z.enum(["admin", "secretary"]),
 });
 
-export type UserSchema = z.infer<typeof UserSchema>;
+export type UserSchema = z.infer<typeof userSchema>;
