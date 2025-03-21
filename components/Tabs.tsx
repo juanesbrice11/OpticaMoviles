@@ -5,16 +5,6 @@ import { useAuth } from "@/context/AuthContext";
 export default function TabNavigator() {
   const { authState } = useAuth();
 
-  const allowedRoutes: { name: string; title: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-    { name: "home", title: "Inicio", icon: "home" },
-    { name: "clients", title: "Clientes", icon: "person" },
-    { name: "sales", title: "Ventas", icon: "bag-handle" },
-  ];
-
-  if (authState?.role === "admin") {
-    allowedRoutes.push({ name: "users", title: "Usuarios", icon: "people" });
-  }
-
   return (
     <Tabs
       screenOptions={{
@@ -33,18 +23,51 @@ export default function TabNavigator() {
         },
       }}
     >
-      {allowedRoutes.map((tab) => (
-        <Tabs.Screen
-          key={tab.name}
-          name={tab.name}
-          options={{
-            title: tab.title,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name={tab.icon} size={size} color={color} />
-            ),
-          }}
-        />
-      ))}
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: "Inicio",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+          href: "/(content)/(tabs)/home",
+        }}
+      />
+
+      <Tabs.Screen
+        name="clients"
+        options={{
+          title: "Clientes",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={size} color={color} />
+          ),
+          href: "/(content)/(tabs)/clients",
+        }}
+      />
+
+      <Tabs.Screen
+        name="sales"
+        options={{
+          title: "Ventas",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bag-handle" size={size} color={color} />
+          ),
+          href: "/(content)/(tabs)/sales",
+        }}
+      />
+
+      <Tabs.Screen
+        name="users"
+        options={{
+          title: "Usuarios",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people" size={size} color={color} />
+          ),
+          href: authState?.role === "admin"
+            ? "/(content)/(tabs)/users"
+            : null,
+        }}
+      />
     </Tabs>
   );
 }
