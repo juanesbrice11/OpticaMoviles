@@ -2,10 +2,11 @@ import { LoginSchema, UserSchema } from "@/types/schemas";
 import { createContext, useContext, useEffect, useState } from "react";
 import { login, register, validateUser } from "@/services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
 
 interface AuthProps {
-    authState?: { token: string | null; authenticated: boolean | null; loading: boolean; };
+    authState?: { token: string | null; authenticated: boolean | null; loading: boolean; role: string | null };
     onRegister?: (data: UserSchema) => Promise<any>;
     onLogin?: (data: LoginSchema) => Promise<any>;
     onLogout?: () => void;
@@ -15,33 +16,48 @@ const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
     return useContext(AuthContext);
-}
+};
 
 export const AuthProvider = ({ children }: any) => {
     const [authState, setAuthState] = useState<{
         token: string | null;
         authenticated: boolean | null;
         loading: boolean;
+        role: string | null;
     }>({
         token: null,
         authenticated: null,
         loading: true,
+        role: null
     });
 
     useEffect(() => {
         const loadToken = async () => {
             try {
                 const token = await AsyncStorage.getItem("@access_token");
-                setAuthState({
-                    token: token || null,
-                    authenticated: !!token,
-                    loading: false, 
-                });
+                if (token) {
+                    const decoded: any = jwtDecode(token);
+                    console.log("Token decodificado:", decoded);
+                    setAuthState({
+                        token,
+                        authenticated: true,
+                        loading: false,
+                        role: decoded.role || null,
+                    });
+                } else {
+                    setAuthState({
+                        token: null,
+                        authenticated: false,
+                        loading: false,
+                        role: null,
+                    });
+                }
             } catch (error) {
                 setAuthState({
                     token: null,
                     authenticated: false,
                     loading: false,
+                    role: null,
                 });
             }
         };
@@ -53,7 +69,7 @@ export const AuthProvider = ({ children }: any) => {
         try {
             return await register(data);
         } catch (error) {
-            console.error('Error en el registro:', error);
+            console.error("Error en el registro:", error);
             throw error;
         }
     };
@@ -61,21 +77,32 @@ export const AuthProvider = ({ children }: any) => {
     const Login = async (data: LoginSchema) => {
         try {
             const response = await login(data);
-            setAuthState({ token: response.access_token, authenticated: true, loading: false });
-            AsyncStorage.setItem("@access_token", response.access_token);
+            const decoded: any = jwtDecode(response.access_token);
+            setAuthState({ 
+                token: response.access_token, 
+                authenticated: true, 
+                loading: false,
+                role: decoded.role || null 
+            });
+            await AsyncStorage.setItem("@access_token", response.access_token);
             router.replace("/(content)/(tabs)/home");
-            return response
+            return response;
         } catch (error) {
-            console.error('Error en el login:', error);
+            console.error("Error en el login:", error);
             throw error;
         }
     };
 
-    const Logout = () => {
-        setAuthState({ token: null, authenticated: false, loading: false });
-        AsyncStorage.removeItem("@access_token");
-        router.replace("/(auth)/login");
-    }
+        const Logout = async () => {
+            try {
+                await AsyncStorage.clear(); // 🔥 Limpia todo el AsyncStorage
+                setAuthState({ token: null, authenticated: false, loading: false, role: null });
+                router.replace("/(auth)/login");
+            } catch (error) {
+                console.error("Error al limpiar AsyncStorage:", error);
+            }
+        };
+    
 
     const value = {
         onRegister: Register,
@@ -83,8 +110,6 @@ export const AuthProvider = ({ children }: any) => {
         onLogout: Logout,
         authState
     };
+
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-
-
+};
