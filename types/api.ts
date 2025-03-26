@@ -24,3 +24,11 @@ export interface CardProps {
     id: number;
     stock: number;
 }
+
+export interface ClinicalHistory {
+    id_client: string;
+    av: string[];
+    sc: string[];
+    cc: string[];
+    ae: string[];
+}

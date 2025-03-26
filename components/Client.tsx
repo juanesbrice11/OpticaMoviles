@@ -54,16 +54,16 @@ export default function Client() {
       className="flex-1"
     >
       <View className="flex-1 bg-white relative">
-          <View className="items-center">
-            <Image
-              source={require("@/assets/images/top.png")}
-              className="w-full h-44"
-            />
-          </View>
+        <View className="items-center">
+          <Image
+            source={require("@/assets/images/top.png")}
+            className="w-full h-44"
+          />
+        </View>
 
-          <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
-            Clientes
-          </Text>
+        <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
+          Clientes
+        </Text>
         <ScrollView>
 
           <GenericSearchBar<ClientBd>
