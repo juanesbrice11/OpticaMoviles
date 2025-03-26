@@ -1,135 +1,162 @@
-import React, { useState } from "react";
-import {
-    View,
-    Text,
-    TextInput,
-    ScrollView,
-    SafeAreaView,
-    Image,
-} from "react-native";
-import { FormComponent, FormField } from "./Form";
-import { ClientSchema, clientSchema } from "@/types/schemas";
+import React, { useEffect, useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
+import { ClientBd } from "@/types/api";
+import { getClients } from "@/services/clientsService";
+import { createClinicalHistory } from "@/services/clinicalHistory";
+import { useRouter } from "expo-router";
+import { cancelbutton, acceptbutton } from "./tokens";
 
-const fields: FormField<ClientSchema>[] = [
-    {
-        name: "name",
-        type: "name",
-        placeholder: "Nombre",
-        label: "Nombre",
-    },
-    {
-        name: "lastname",
-        type: "lastname",
-        placeholder: "Apellido",
-        label: "Apellido",
-    },
-    {
-        name: "email",
-        type: "email",
-        placeholder: "Email",
-        label: "Email",
-    },
-    {
-        name: "id",
-        type: "id",
-        placeholder: "ID",
-        label: "ID",
-    },
-    {
-        name: "phone",
-        type: "phone",
-        placeholder: "Teléfono",
-        label: "Teléfono",
-    },
-    {
-        name: "clinicalHistory",
-        type: "clinicalHistory",
-        placeholder: "Historia Clínica",
-        label: "Historia Clínica",
-    },
+const initialRows = [
+    { category: "Visión Lejana", values: { SC: "", CC: "", AE: "" } },
+    { category: "Visión Cercana", values: { SC: "", CC: "", AE: "" } }
 ];
 
 const HistoriaClinica = () => {
-    const headers = ["SC", "CC", "AE"];
-
-    const initialRows = [
-        { category: "Lejos", AV: "OD", values: { SC: "", CC: "", AE: "" } },
-        { category: "Lejos", AV: "OI", values: { SC: "", CC: "", AE: "" } },
-        { category: "Cerca", AV: "OD", values: { SC: "", CC: "", AE: "" } },
-        { category: "Cerca", AV: "OI", values: { SC: "", CC: "", AE: "" } },
-    ];
-
+    const router = useRouter();
+    const [clientId, setClientId] = useState("");
+    const [selectedClient, setSelectedClient] = useState<ClientBd | null>(null);
+    const [clients, setClients] = useState<ClientBd[]>([]);
     const [rows, setRows] = useState(initialRows);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const updateValue = (rowIndex: number, header: string, newValue: string) => {
-        const newRows = [...rows];
-        newRows[rowIndex].values[header] = newValue;
-        setRows(newRows);
+    useEffect(() => {
+        const fetchClients = async () => {
+            try {
+                const apiClients = await getClients();
+                setClients(apiClients);
+            } catch (error) {
+                console.error("Error al cargar clientes:", error);
+                Alert.alert("Error", "No se pudieron cargar los clientes");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchClients();
+    }, []);
+
+    const handleSearch = () => {
+        const foundClient = clients.find(client => client.id === clientId);
+        if (foundClient) {
+            setSelectedClient(foundClient);
+        } else {
+            Alert.alert("Cliente no encontrado", "Verifique el ID ingresado");
+            setSelectedClient(null);
+        }
     };
 
-    const onSubmit = (data: ClientSchema) => {
-        console.log('Historia clinica:', data);
+    const handleInputChange = (category: string, field: "SC" | "CC" | "AE", value: string) => {
+        setRows(prevRows =>
+            prevRows.map(row =>
+                row.category === category ? { ...row, values: { ...row.values, [field]: value } } : row
+            )
+        );
     };
 
-    const onCancel = () => {
-        setRows(initialRows);
+    const onSubmit = async () => {
+        if (!selectedClient) {
+            Alert.alert("Error", "Seleccione un cliente antes de guardar");
+            return;
+        }
+
+        const historyData = {
+            id_client: selectedClient.id,
+            av: [],
+            sc: rows.map(row => row.values.SC),
+            cc: rows.map(row => row.values.CC),
+            ae: rows.map(row => row.values.AE),
+        };
+
+        try {
+            await createClinicalHistory(historyData);
+            Alert.alert("Éxito", "Historia clínica guardada exitosamente");
+            router.replace("/home");
+        } catch (error) {
+            console.error("Error al enviar los datos:", error);
+            Alert.alert("Error", "No se pudo conectar con el servidor");
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <View className="flex-1 justify-center items-center">
+                <ActivityIndicator size="large" color="#1769AA" />
+            </View>
+        );
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-white relative">
-
-            <View className="items-center">
-                <Image
-                    source={require("@/assets/images/top.png")}
-                    className="w-full h-44"
-                />
-            </View>
-            <Text className="text-2xl font-bold text-center mb-2 mt-4 text-primary">
-                Crear Historia Clínica
-            </Text>
-
-            <ScrollView>
-                <View className="flex-row border-b border-gray-300 pb-2">
-                    <Text className="flex-1 font-bold text-center"></Text>
-                    <Text className="flex-1 font-bold text-center">AV</Text>
-                    {headers.map((header, index) => (
-                        <Text key={index} className="flex-1 font-bold text-center">
-                            {header}
-                        </Text>
-                    ))}
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
+            <View className="flex-1 bg-white relative">
+                <View className="items-center">
+                    <Image source={require("@/assets/images/top.png")} className="w-full h-44" />
                 </View>
 
-                {rows.map((row, rowIndex) => (
-                    <View
-                        key={rowIndex}
-                        className="flex-row border-b border-gray-200 py-2 items-center"
-                    >
-                        <Text className="flex-1 text-center">{row.category}</Text>
-                        <Text className="flex-1 text-center">{row.AV}</Text>
-                        {headers.map((header, colIndex) => (
-                            <TextInput
-                                key={colIndex}
-                                className="flex-1 border border-gray-300 rounded p-1 text-center mx-1"
-                                value={row.values[header]}
-                                onChangeText={(text) => updateValue(rowIndex, header, text)}
-                                placeholder="-"
-                                placeholderTextColor="#999"
-                            />
-                        ))}
+                <Text className="text-2xl font-bold text-center mb-4 text-primary">Buscar Cliente</Text>
+                <View className="mx-6">
+                    <TextInput
+                        className="border border-gray-300 rounded p-2 bg-white"
+                        placeholder="Ingrese el ID del cliente"
+                        value={clientId}
+                        onChangeText={(text) => setClientId(text)}
+                    />
+                    <TouchableOpacity className="bg-primary py-2 rounded-lg mt-2 items-center mx-10" onPress={handleSearch}>
+                        <Text className="text-white font-bold">Buscar</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {selectedClient && (
+                    <Text className="text-lg font-bold text-center my-2 text-gray-700">
+                        Cliente: {selectedClient.name} {selectedClient.lastname}
+                    </Text>
+                )}
+
+                <Text className="text-2xl font-bold text-center my-4 text-primary">Historia Clínica</Text>
+                <ScrollView className="mx-6">
+                    {rows.map((row, index) => (
+                        <View key={index} className="mb-4 p-3 bg-white rounded-lg">
+                            <Text className="font-bold mb-2 text-gray-700 text-center">{row.category}</Text>
+                            <View className="flex-row items-center gap-2">
+                                <Text className="font-bold text-gray-700">SC:</Text>
+                                <TextInput
+                                    className="border border-gray-300 rounded p-2 bg-gray-50 flex-1"
+                                    placeholder="SC"
+                                    value={row.values.SC}
+                                    onChangeText={(text) => handleInputChange(row.category, "SC", text)}
+                                />
+                            </View>
+                            <View className="flex-row items-center gap-2 mt-2">
+                                <Text className="font-bold text-gray-700">CC:</Text>
+                                <TextInput
+                                    className="border border-gray-300 rounded p-2 bg-gray-50 flex-1"
+                                    placeholder="CC"
+                                    value={row.values.CC}
+                                    onChangeText={(text) => handleInputChange(row.category, "CC", text)}
+                                />
+                            </View>
+                            <View className="flex-row items-center gap-2 mt-2">
+                                <Text className="font-bold text-gray-700">AE:</Text>
+                                <TextInput
+                                    className="border border-gray-300 rounded p-2 bg-gray-50 flex-1"
+                                    placeholder="AE"
+                                    value={row.values.AE}
+                                    onChangeText={(text) => handleInputChange(row.category, "AE", text)}
+                                />
+                            </View>
+                        </View>
+                    ))}
+
+                    <View className="items-center my-6 flex-row justify-center gap-4 ">
+                        <TouchableOpacity className={`${acceptbutton}`} onPress={onSubmit}>
+                            <Text className="text-white font-bold text-lg">Guardar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity className={`${cancelbutton}`} onPress={() => router.replace("/home")}>
+                            <Text className="text-white font-bold text-lg">Cancelar</Text>
+                        </TouchableOpacity>
                     </View>
-                ))}
 
-                <FormComponent<ClientSchema>
-                    schema={clientSchema}
-                    fields={fields}
-                    buttonAccept="Guardar"
-                    buttonCancel="Cancelar"
-                    onSubmit={onSubmit}
-                    onCancel={onCancel}
-                />
-            </ScrollView>
-
-        </SafeAreaView>
+                </ScrollView>
+            </View>
+        </KeyboardAvoidingView>
     );
 };
 
