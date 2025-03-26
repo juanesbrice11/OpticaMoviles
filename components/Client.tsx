@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Button, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, Image, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClientBd } from "@/types/api";
+import { useRouter } from "expo-router";
 
 import GenericSearchBar from "@/components/SearchBar";
 import ClientListItem from "@/components/ClientListItem";
@@ -10,6 +11,7 @@ import { getClients } from "@/services/clientsService";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Client() {
+  const router = useRouter();
   const { onLogout } = useAuth();
   const [menuVisible, setMenuVisible] = useState(false);
   const [clients, setClients] = useState<ClientBd[]>([]);
@@ -64,8 +66,8 @@ export default function Client() {
         <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
           Clientes
         </Text>
-        <ScrollView>
 
+        <ScrollView>
           <GenericSearchBar<ClientBd>
             data={clients}
             placeholder="Buscar clientes..."
@@ -77,8 +79,8 @@ export default function Client() {
             }
             renderItem={renderClient}
           />
-
         </ScrollView>
+
         <FloatingMenu
           visible={menuVisible}
           onClose={() => setMenuVisible(false)}
@@ -88,13 +90,9 @@ export default function Client() {
           ]}
         />
         <View className="absolute bottom-0 right-0 mb-4 mr-4">
-          <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
-            <Ionicons name="add-circle" size={60} color="#1769AA" />
-          </TouchableOpacity>
+          <Ionicons name="add-circle" size={60} color="#1769AA" onPress={() => setMenuVisible(!menuVisible)} />
         </View>
-
       </View>
     </KeyboardAvoidingView>
-
   );
 }

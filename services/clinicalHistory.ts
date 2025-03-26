@@ -11,9 +11,20 @@ export const getClinicalHistories = async (): Promise<ClinicalHistory[]> => {
     try {
         const response = await fetch(`${URL}/clinical-histories`);
         const data = await response.json();
-        return data.histories;
+        return data;
     } catch (error) {
         console.error('Error fetching clinical histories:', error);
+        throw error;
+    }
+};
+
+export const getClinicalHistoryById = async (id: string): Promise<ClinicalHistory> => {
+    try {
+        const response = await fetch(`${URL}/clinical-histories/${id}`);
+        const data = await response.json();
+        return data.history;
+    } catch (error) {
+        console.error('Error fetching clinical history by id:', error);
         throw error;
     }
 };

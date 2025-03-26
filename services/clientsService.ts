@@ -18,6 +18,17 @@ export const getClients = async (): Promise<ClientBd[]> => {
     }
 };
 
+export const getClientById = async (id: string): Promise<ClientBd> => {
+    try {
+        const response = await fetch(`${URL}/clients/${id}`);
+        const data = await response.json();
+        return data.client;
+    } catch (error) {
+        console.error('Error fetching client by id:', error);
+        throw error;
+    }
+};
+
 export const createClient = async (clientData: ClientBd): Promise<ClientBd> => {
     try {
         const response = await fetch(`${URL}/clients`, {
