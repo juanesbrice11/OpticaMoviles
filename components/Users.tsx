@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, ScrollView, Button, Image, TouchableOpacity } from "react-native";
+import { View, Text, ActivityIndicator, ScrollView, Button, Image, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import UsersListItem from "@/components/UsersListItem";
 import GenericSearchBar from "@/components/SearchBar";
-import { getUsers } from "@/services/usersService"; // Asegúrate de tener este servicio
+import { getUsers } from "@/services/usersService";
 import { Ionicons } from "@expo/vector-icons";
 import FloatingMenu from "./FloatingMenu";
+import { User } from "@/types/api";
 
 const Users = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -38,8 +39,11 @@ const Users = () => {
   );
 
   return (
-    <View className="flex-1 bg-white relative">
-      <ScrollView>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1"
+    >
+      <View className="flex-1 bg-white relative">
         <View className="items-center">
           <Image
             source={require("@/assets/images/top.png")}
@@ -50,30 +54,33 @@ const Users = () => {
         <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
           Usuarios
         </Text>
+        <ScrollView>
 
-        <GenericSearchBar
-          data={users}
-          placeholder="Buscar usuarios..."
-          filterPredicate={(user, query) =>
-            user.name.toLowerCase().includes(query.toLowerCase()) ||
-            user.id.includes(query)
-          }
-          renderItem={renderUser}
+          <GenericSearchBar
+            data={users}
+            placeholder="Buscar usuarios..."
+            filterPredicate={(user, query) =>
+              user.name.toLowerCase().includes(query.toLowerCase()) ||
+              user.email.toLowerCase().includes(query.toLowerCase()) ||
+              user.id.includes(query)
+            }
+            renderItem={renderUser}
+          />
+        </ScrollView>
+        <FloatingMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+          routes={[
+            { url: "/crearUsuario", text: "Crear usuario" },
+          ]}
         />
-      </ScrollView>
-      <FloatingMenu
-        visible={menuVisible}
-        onClose={() => setMenuVisible(false)}
-        routes={[
-          { url: "/crearUsuario", text: "Crear usuario" },
-        ]}
-      />
-      <View className="absolute bottom-0 right-0 mb-4 mr-4">
-        <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
-          <Ionicons name="add-circle" size={60} color="#1769AA" />
-        </TouchableOpacity>
+        <View className="absolute bottom-0 right-0 mb-4 mr-4">
+          <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+            <Ionicons name="add-circle" size={60} color="#1769AA" />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

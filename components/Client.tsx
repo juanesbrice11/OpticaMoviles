@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Button } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Button, KeyboardAvoidingView, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClientBd } from "@/types/api";
 
@@ -49,44 +49,52 @@ export default function Client() {
   );
 
   return (
-    <View className="flex-1 bg-white relative">
-      <ScrollView>
-        <View className="items-center">
-          <Image
-            source={require("@/assets/images/top.png")}
-            className="w-full h-44"
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1"
+    >
+      <View className="flex-1 bg-white relative">
+          <View className="items-center">
+            <Image
+              source={require("@/assets/images/top.png")}
+              className="w-full h-44"
+            />
+          </View>
+
+          <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
+            Clientes
+          </Text>
+        <ScrollView>
+
+          <GenericSearchBar<ClientBd>
+            data={clients}
+            placeholder="Buscar clientes..."
+            filterPredicate={(client, query) =>
+              client.name.toLowerCase().includes(query.toLowerCase()) ||
+              client.lastname.toLowerCase().includes(query.toLowerCase()) ||
+              client.email.toLowerCase().includes(query.toLowerCase()) ||
+              client.id.includes(query)
+            }
+            renderItem={renderClient}
           />
+
+        </ScrollView>
+        <FloatingMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+          routes={[
+            { url: "/crearHistoria", text: "Crear historia" },
+            { url: "/crearCliente", text: "Crear cliente" },
+          ]}
+        />
+        <View className="absolute bottom-0 right-0 mb-4 mr-4">
+          <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+            <Ionicons name="add-circle" size={60} color="#1769AA" />
+          </TouchableOpacity>
         </View>
 
-        <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
-          Clientes
-        </Text>
-
-        <GenericSearchBar<ClientBd>
-          data={clients}
-          placeholder="Buscar clientes..."
-          filterPredicate={(client, query) =>
-            client.name.toLowerCase().includes(query.toLowerCase()) ||
-            client.id.includes(query)
-          }
-          renderItem={renderClient}
-        />
-
-      </ScrollView>
-      <FloatingMenu
-        visible={menuVisible}
-        onClose={() => setMenuVisible(false)}
-        routes={[
-          { url: "/crearHistoria", text: "Crear historia" },
-          { url: "/crearCliente", text: "Crear cliente" },
-        ]}
-      />
-      <View className="absolute bottom-0 right-0 mb-4 mr-4">
-        <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
-          <Ionicons name="add-circle" size={60} color="#1769AA" />
-        </TouchableOpacity>
       </View>
+    </KeyboardAvoidingView>
 
-    </View>
   );
 }
