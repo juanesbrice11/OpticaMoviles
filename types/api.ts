@@ -26,6 +26,7 @@ export interface CardProps {
 }
 
 export interface ClinicalHistory {
+    id?: number;
     id_client: string;
     av: string[];
     sc: string[];
