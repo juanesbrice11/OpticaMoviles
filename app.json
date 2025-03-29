@@ -21,7 +21,8 @@
         "foregroundImage": "./assets/images/iconOptica.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.juanesbrice.Optica"
+      "package": "com.juanesbrice.Optica",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
