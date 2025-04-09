@@ -43,3 +43,13 @@ export const createGlasses = async (formData: FormData): Promise<Glasses> => {
     throw error;
   }
 };
+
+export const deleteGlasses = async (ids: number[]) => {
+  try {
+    const response = await axios.delete(`${URL}/glasses`, { data: { ids } });
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting glasses:', error);
+    throw error;
+  }
+};
