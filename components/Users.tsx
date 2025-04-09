@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, ScrollView, Button, Image, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, ActivityIndicator, ScrollView, Button, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import UsersListItem from "@/components/UsersListItem";
 import GenericSearchBar from "@/components/SearchBar";
 import { getUsers } from "@/services/usersService";
@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import FloatingMenu from "./FloatingMenu";
 import { User } from "@/types/api";
 
-const Users = () => {
+export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -18,7 +18,7 @@ const Users = () => {
       const apiUsers = await getUsers();
       setUsers(apiUsers);
     } catch (error) {
-      console.error('Error al cargar usuarios:', error);
+      Alert.alert("Error", "No se pudo cargar la lista de usuarios");
     } finally {
       setIsLoading(false);
     }
@@ -85,5 +85,3 @@ const Users = () => {
     </KeyboardAvoidingView>
   );
 };
-
-export default Users;
