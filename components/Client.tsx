@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 
 import GenericSearchBar from "@/components/SearchBar";
 import ClientListItem from "@/components/ClientListItem";
-import FloatingMenu from "@/components/FloatingMenu";
+import FloatingMenu from "@/components/molecules/FloatingMenu";
 import { getClients } from "@/services/clientsService";
 import { useAuth } from "@/context/AuthContext";
 

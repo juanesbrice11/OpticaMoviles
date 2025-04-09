@@ -147,14 +147,20 @@ export default function EditGlassesScreen() {
 
             // Solo enviar la imagen si ha sido cambiada
             if (formData.imagen !== originalImage) {
-                const uriParts = formData.imagen.split('.');
-                const fileType = uriParts[uriParts.length - 1];
-
-                data.append('imagen', {
-                    uri: formData.imagen,
+                // Asegurarse de que la URI sea accesible
+                const imageUri = Platform.OS === 'ios' 
+                    ? formData.imagen.replace('file://', '') 
+                    : formData.imagen;
+                
+                // Crear un objeto de archivo para la imagen
+                const imageFile = {
+                    uri: imageUri,
                     type: 'image/jpeg',
                     name: 'photo.jpg',
-                } as any);
+                };
+                
+                // Agregar la imagen al FormData
+                data.append('imagen', imageFile as any);
             }
 
             await updateGlasses(Number(id), data);
