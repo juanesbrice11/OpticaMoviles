@@ -20,52 +20,69 @@ export default function CreateGlassesScreen() {
     const [error, setError] = useState<string | null>(null);
 
     const pickImage = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        
-        if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-            return;
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+        alert('Lo sentimos, necesitamos permisos para acceder a la galería');
+        return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images",
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+    });
+
+    if (!result.canceled) {
+        // Guarda el URI en el estado
+        setFormData(prev => ({ ...prev, imagen: result.assets[0].uri }));
+    }
+};
+
+const handleSubmit = async () => {
+    try {
+        setLoading(true);
+        setError(null);
+
+        if (!formData.marca || !formData.imagen || !formData.precio || !formData.material || !formData.stock) {
+            throw new Error('Todos los campos son requeridos');
         }
 
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: "images",
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-            base64: true
+        const data = new FormData();
+        
+        // Asegurarnos de que precio y stock sean números válidos
+        data.append('marca', formData.marca.trim());
+        data.append('precio', formData.precio);  // Enviamos como string
+        data.append('material', formData.material.trim());
+        data.append('stock', formData.stock);    // Enviamos como string
+
+        // Manejo de la imagen
+        const uriParts = formData.imagen.split('.');
+        const fileType = uriParts[uriParts.length - 1];
+        
+        data.append('imagen', {
+            uri: formData.imagen,
+            type: 'image/jpeg',  // Forzamos el tipo a jpeg
+            name: 'photo.jpg',   // Nombre fijo
+        } as any);
+
+        console.log('Datos a enviar:', {
+            marca: formData.marca,
+            precio: formData.precio,
+            material: formData.material,
+            stock: formData.stock
         });
 
-        if (!result.canceled) {
-            const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
-            setFormData(prev => ({ ...prev, imagen: base64Image }));
-        }
-    };
-
-    const handleSubmit = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            if (!formData.marca || !formData.imagen || !formData.precio || !formData.material || !formData.stock) {
-                throw new Error('Todos los campos son requeridos');
-            }
-
-            const glassesData = {
-                marca: formData.marca,
-                imagen: formData.imagen,
-                precio: Number(formData.precio),
-                material: formData.material,
-                stock: Number(formData.stock)
-            };
-
-            await createGlasses(glassesData);
-            router.push('/home');
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error al crear la gafa');
-        } finally {
-            setLoading(false);
-        }
-    };
+        const response = await createGlasses(data);
+        router.push('/home');
+    } catch (err) {
+        console.error('Error completo:', JSON.stringify(err));
+        setError('Error al crear la gafa');
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <SafeAreaView className="flex-1 bg-white">
