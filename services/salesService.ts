@@ -32,13 +32,14 @@ export const getSales = async (): Promise<Sale[]> => {
   }
 };
 
-export const createSale = async (formData: FormData): Promise<Sale> => {
+export const createSale = async (saleData: {
+  clientId: string;
+  glassesId: number;
+  total: number;
+  date: string;
+}): Promise<Sale> => {
   try {
-    const response = await axios.post<Sale>(`${URL}/sales`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await axios.post<Sale>(`${URL}/sales`, saleData);
     return response.data;
   } catch (error) {
     console.error('Error creating sale:', error);
