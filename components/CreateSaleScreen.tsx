@@ -53,7 +53,7 @@ export default function CreateSaleScreen() {
     };
 
     const handleCancel = () => {
-        router.push('/sales');
+        router.replace('/home');
     };
 
     return (
