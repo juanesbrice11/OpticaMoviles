@@ -4,7 +4,7 @@ import UsersListItem from "@/components/UsersListItem";
 import GenericSearchBar from "@/components/SearchBar";
 import { getUsers } from "@/services/usersService";
 import { Ionicons } from "@expo/vector-icons";
-import FloatingMenu from "./FloatingMenu";
+import FloatingMenu from "./molecules/FloatingMenu";
 import { User } from "@/types/api";
 
 export default function Users() {
