@@ -4,4 +4,4 @@ export default function SalesScreen() {
   return (
     <Sales />
   );
-}
+} 
