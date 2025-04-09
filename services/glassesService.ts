@@ -30,12 +30,16 @@ export const getGlassesById = async (id: number): Promise<Glasses> => {
   }
 };
 
-export const createGlasses = async (glassesData: Omit<Glasses, 'id'>): Promise<Glasses> => {
+export const createGlasses = async (formData: FormData): Promise<Glasses> => {
   try {
-    const response = await axios.post<Glasses>(`${URL}/glasses`, glassesData);
+    const response = await axios.post<Glasses>(`${URL}/glasses`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', 
+      },
+    });
     return response.data;
   } catch (error) {
     console.error('Error creating glasses:', error);
     throw error;
   }
-}; 
+};

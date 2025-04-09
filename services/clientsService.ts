@@ -9,6 +9,7 @@ interface ClientResponse {
 
 export const getClients = async (): Promise<ClientBd[]> => {
     try {
+        console.log(`${URL}/clients`)
         const response = await fetch(`${URL}/clients`);
         const data = await response.json();
         return data.clients;

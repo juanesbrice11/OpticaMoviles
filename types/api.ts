@@ -1,4 +1,4 @@
-export const URL = `https://${process.env.EXPO_PUBLIC_API_URL}`;
+export const URL = `http://${process.env.EXPO_PUBLIC_API_URL}:3000`;
 
 export interface ClientBd {
     id: string;
