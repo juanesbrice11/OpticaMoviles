@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, Image, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClientBd } from "@/types/api";
 import { useRouter } from "expo-router";
@@ -11,30 +11,31 @@ import { getClients } from "@/services/clientsService";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Client() {
-  const router = useRouter();
   const { onLogout } = useAuth();
   const [menuVisible, setMenuVisible] = useState(false);
   const [clients, setClients] = useState<ClientBd[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchClients = async () => {
+    setIsLoading(true);
+    try {
+      const apiClients = await getClients();
+      const formattedClients: ClientBd[] = apiClients.map(client => ({
+        id: client.id,
+        name: client.name,
+        lastname: client.lastname,
+        phone: client.phone,
+        email: client.email,
+      }));
+      setClients(formattedClients);
+    } catch (error) {
+      Alert.alert("Error", "No se pudo cargar la lista de clientes");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const apiClients = await getClients();
-        const formattedClients: ClientBd[] = apiClients.map(client => ({
-          id: client.id,
-          name: client.name,
-          lastname: client.lastname,
-          phone: client.phone,
-          email: client.email,
-        }));
-        setClients(formattedClients);
-      } catch (error) {
-        console.error('Error al cargar clientes:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchClients();
   }, []);
 
@@ -47,7 +48,7 @@ export default function Client() {
   }
 
   const renderClient = ({ item }: { item: ClientBd }) => (
-    <ClientListItem client={item} />
+    <ClientListItem client={item} refreshClients={fetchClients} />
   );
 
   return (
@@ -90,7 +91,9 @@ export default function Client() {
           ]}
         />
         <View className="absolute bottom-0 right-0 mb-4 mr-4">
-          <Ionicons name="add-circle" size={60} color="#1769AA" onPress={() => setMenuVisible(!menuVisible)} />
+          <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+            <Ionicons name="add-circle" size={60} color="#1769AA" />
+          </TouchableOpacity>
         </View>
       </View>
     </KeyboardAvoidingView>

@@ -11,40 +11,43 @@ import {
     Keyboard,
 } from "react-native";
 import { updateUser } from "@/services/usersService";
+import { updateClient } from "@/services/clientsService";
 
 interface EditUserModalProps {
     visible: boolean;
-    userData: {
+    clientData: {
         id: string;
         name: string;
+        lastname: string;
+        phone: string;
         email: string;
-        role: string;
     };
     onClose: () => void;
     onSuccess: () => void;
 }
 
-export default function EditUserModal({ visible, userData, onClose, onSuccess }: EditUserModalProps) {
-    const [name, setName] = useState(userData.name);
-    const [email, setEmail] = useState(userData.email);
-    const [role, setRole] = useState(userData.role);
+export default function EditClientModal({ visible, clientData, onClose, onSuccess }: EditUserModalProps) {
+    const [name, setName] = useState(clientData.name);
+    const [lastname, setLastname] = useState(clientData.lastname);
+    const [phone, setPhone] = useState(clientData.phone);
+    const [email, setEmail] = useState(clientData.email);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSave = async () => {
         try {
             setIsLoading(true);
-            const updatedUser = {
-                ...userData,
+            const updatedClient = {
+                ...clientData,
                 name,
+                lastname,
                 email,
-                role,
-            };
-            
-            await updateUser(String(userData.id), updatedUser);
-            Alert.alert("Éxito", "Usuario actualizado correctamente");
+                phone,
+            };            
+            await updateClient(String(clientData.id), updatedClient);
+            Alert.alert("Éxito", "Cliente actualizado correctamente");
             onSuccess();
         } catch (error) {
-            Alert.alert("Error", "No se pudo actualizar el usuario");
+            Alert.alert("Error", "No se pudo actualizar el cliente");
         } finally {
             setIsLoading(false);
         }
@@ -79,6 +82,16 @@ export default function EditUserModal({ visible, userData, onClose, onSuccess }:
                                 </View>
 
                                 <View className="mb-4">
+                                    <Text className="font-semibold mb-1">Apellido</Text>
+                                    <TextInput
+                                        value={lastname}
+                                        onChangeText={setLastname}
+                                        className="border border-gray-300 rounded p-2"
+                                        editable={!isLoading}
+                                    />
+                                </View>
+
+                                <View className="mb-4">
                                     <Text className="font-semibold mb-1">Email</Text>
                                     <TextInput
                                         value={email}
@@ -90,14 +103,16 @@ export default function EditUserModal({ visible, userData, onClose, onSuccess }:
                                 </View>
 
                                 <View className="mb-4">
-                                    <Text className="font-semibold mb-1">Rol</Text>
+                                    <Text className="font-semibold mb-1">Teléfono</Text>
                                     <TextInput
-                                        value={role}
-                                        onChangeText={setRole}
+                                        value={phone}
+                                        onChangeText={setPhone}
                                         className="border border-gray-300 rounded p-2"
+                                        keyboardType="phone-pad"
                                         editable={!isLoading}
                                     />
                                 </View>
+
                             </ScrollView>
 
                             <View className="flex-row justify-end gap-2 mt-4">
