@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Image, Pressable, TouchableOpacity, Modal, Alert } from "react-native";
 import { Link } from "expo-router";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Card from "@/components/Card";
 import FloatingMenu from "./FloatingMenu";
 import { texttitile } from "./tokens";
-import { getGlasses } from "@/services/glassesService";
+import { getGlasses, deleteGlasses } from "@/services/glassesService";
 
 interface Glasses {
   id: number;
@@ -22,21 +22,69 @@ const Home = () => {
   const [glasses, setGlasses] = useState<Glasses[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedGlasses, setSelectedGlasses] = useState<number[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const fetchGlasses = async () => {
-      try {
-        const data = await getGlasses();
-        setGlasses(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        setLoading(false);
-      }
-    };
-
     fetchGlasses();
   }, []);
+
+  const fetchGlasses = async () => {
+    try {
+      const data = await getGlasses();
+      setGlasses(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      setLoading(false);
+    }
+  };
+
+  const handleLongPress = (id: number) => {
+    if (!isSelectionMode) {
+      setIsSelectionMode(true);
+    }
+    toggleSelection(id);
+  };
+
+  const toggleSelection = (id: number) => {
+    setSelectedGlasses(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(item => item !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
+  const handlePress = (id: number) => {
+    if (isSelectionMode) {
+      toggleSelection(id);
+    }
+  };
+
+  const exitSelectionMode = () => {
+    setIsSelectionMode(false);
+    setSelectedGlasses([]);
+  };
+
+  const handleDelete = async () => {
+    if (selectedGlasses.length === 0) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteGlasses(selectedGlasses);
+      await fetchGlasses(); // Recargar la lista
+      setShowDeleteModal(false);
+      exitSelectionMode();
+    } catch (err) {
+      Alert.alert('Error', 'No se pudieron eliminar las gafas seleccionadas');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -46,7 +94,27 @@ const Home = () => {
           className="w-full h-44"
         />
       </View>
-      <Text className={`${texttitile}`}>Inventario</Text>
+      <View className="px-4">
+        <Text className={`${texttitile} text-center`}>Inventario</Text>
+        {isSelectionMode && (
+          <View className="flex-row justify-center items-center mt-2 space-x-4">
+            <TouchableOpacity
+              onPress={() => setShowDeleteModal(true)}
+              disabled={selectedGlasses.length === 0}
+              className={`${selectedGlasses.length === 0 ? 'opacity-50' : ''}`}
+            >
+              <Ionicons
+                name="trash"
+                size={24}
+                color={selectedGlasses.length === 0 ? "#999" : "#FF0000"}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={exitSelectionMode}>
+              <Text className="text-blue-500">Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
       <ScrollView>
         {loading ? (
           <Text className="text-center mt-4">Cargando...</Text>
@@ -55,23 +123,22 @@ const Home = () => {
         ) : (
           <View className="flex flex-row flex-wrap justify-center p-4">
             {glasses.map((item) => (
-              <Link
+              <Pressable
                 key={item.id}
-                href={`/${item.id}`}
-                asChild
+                onPress={() => handlePress(item.id)}
+                onLongPress={() => handleLongPress(item.id)}
+                className={`m-2 ${selectedGlasses.includes(item.id) ? 'opacity-70' : ''}`}
               >
-                <Pressable>
-                  <Card
-                    key={item.id}
-                    name={item.marca}
-                    imageUri={item.imagen}
-                    price={item.precio}
-                    material={item.material}
-                    id={item.id}
-                    stock={item.stock}
-                  />
-                </Pressable>
-              </Link>
+                <Card
+                  name={item.marca}
+                  imageUri={item.imagen}
+                  price={item.precio}
+                  material={item.material}
+                  id={item.id}
+                  stock={item.stock}
+                  isSelected={selectedGlasses.includes(item.id)}
+                />
+              </Pressable>
             ))}
           </View>
         )}
@@ -89,6 +156,40 @@ const Home = () => {
           <Ionicons name="add-circle" size={60} color="#1769AA" />
         </TouchableOpacity>
       </View>
+
+      {/* Modal de confirmación de eliminación */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showDeleteModal}
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white p-6 rounded-lg w-4/5">
+            <Text className="text-lg font-bold mb-4">Confirmar eliminación</Text>
+            <Text className="mb-6">
+              ¿Estás seguro de que deseas eliminar {selectedGlasses.length} {selectedGlasses.length === 1 ? 'gafa' : 'gafas'} seleccionada{selectedGlasses.length !== 1 ? 's' : ''}?
+            </Text>
+            <View className="flex-row justify-end space-x-4">
+              <TouchableOpacity
+                onPress={() => setShowDeleteModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-200"
+              >
+                <Text>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleDelete}
+                disabled={isDeleting}
+                className={`px-4 py-2 rounded-lg bg-red-500 ${isDeleting ? 'opacity-50' : ''}`}
+              >
+                <Text className="text-white font-bold">
+                  {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
