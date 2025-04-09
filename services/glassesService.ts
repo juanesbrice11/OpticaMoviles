@@ -53,3 +53,17 @@ export const deleteGlasses = async (ids: number[]) => {
     throw error;
   }
 };
+
+export const updateGlasses = async (id: number, formData: FormData) => {
+  try {
+    const response = await axios.put(`${URL}/glasses/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating glasses:', error);
+    throw error;
+  }
+};
