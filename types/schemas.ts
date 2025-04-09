@@ -48,3 +48,28 @@ export const userSchema = z.object({
 });
 
 export type UserSchema = z.infer<typeof userSchema>;
+
+export const createGlassesSchema = z.object({
+    marca: z
+        .string()
+        .nonempty('La marca es requerida')
+        .max(50, 'La marca no puede exceder 50 caracteres')
+        .regex(/^[a-zA-Z0-9_-]+$/, 'La marca solo puede contener letras, números, guiones (-) y guiones bajos (_)'),
+    precio: z
+        .string()
+        .nonempty('El precio es requerido')
+        .max(50, 'El precio no puede exceder 50 caracteres'),
+    material: z
+        .string()
+        .nonempty('El material es requerido')
+        .max(50, 'El material no puede exceder 50 caracteres'),
+    stock: z
+        .string()
+        .nonempty('El stock es requerido')
+        .max(50, 'El stock no puede exceder 50 caracteres'),
+    imagen: z
+        .string()
+        .nonempty('La imagen es requerida')
+});
+
+export type CreateGlassesSchema = z.infer<typeof createGlassesSchema>;
