@@ -68,7 +68,7 @@ export const getUserById = async (id: string) => {
   }
 }; 
 
-export const updateUser = async (id: string, userData: { name: string; email: string; password: string; role: string }) => {
+export const updateUser = async (id: string, userData: Partial<{ name: string; email: string; role: string }>) => {
   try {
     const response = await fetch(`${URL}/users/${id}`, {
       method: 'PUT',
@@ -91,6 +91,7 @@ export const updateUser = async (id: string, userData: { name: string; email: st
     throw error;
   }
 }
+
 export const deleteUser = async (id: string) => {
   try {
     const response = await fetch(`${URL}/users/${id}`, {

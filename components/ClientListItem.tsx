@@ -69,8 +69,9 @@ export default function ClientListItem({ client }: { client: ClientBd }) {
       <ConfirmModal
         visible={showConfirmModal}
         onConfirm={handleDelete}
-        onCancel={() => setShowConfirmModal(false)}
-        message="¿Estás seguro de que deseas eliminar este cliente?"
+        onClose={() => setShowConfirmModal(false)}
+        title="Eliminar cliente"
+        description="¿Estás seguro de que deseas eliminar este cliente?"
       />
       </SafeAreaView>
     </TouchableOpacity>

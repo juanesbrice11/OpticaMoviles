@@ -12,17 +12,19 @@ const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
 
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      const apiUsers = await getUsers();
+      setUsers(apiUsers);
+    } catch (error) {
+      console.error('Error al cargar usuarios:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const apiUsers = await getUsers();
-        setUsers(apiUsers);
-      } catch (error) {
-        console.error('Error al cargar usuarios:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchUsers();
   }, []);
 
@@ -35,7 +37,7 @@ const Users = () => {
   }
 
   const renderUser = ({ item }: { item: any }) => (
-    <UsersListItem user={item} />
+    <UsersListItem user={item} refreshUsers={fetchUsers} />
   );
 
   return (

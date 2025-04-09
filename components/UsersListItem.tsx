@@ -1,23 +1,41 @@
 import React, { useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { columleft, columright } from "./tokens";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ConfirmModal from "@/components/molecules/ConfirmModal";
-import { deleteUser } from "@/services/usersService";
+import { deleteUser, getUsers, updateUser } from "@/services/usersService";
+import EditUserModal from "./molecules/EditUserModal";
 
-export default function UsersListItem({ user }: { user: { id: string; name: string; email: string; role: string } }) {
+interface UsersListItemProps {
+  user: { id: string; name: string; email: string; role: string };
+  refreshUsers: () => void;
+}
+
+export default function UsersListItem({ user, refreshUsers }: UsersListItemProps) {
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   async function handleDelete() {
     try {
       const result = await deleteUser(user.id);
-      console.log(result);
+      if (result.statusCode === 200) {
+        Alert.alert("Éxito", "Usuario eliminado correctamente");
+        refreshUsers(); 
+      } else {
+        Alert.alert("Error", "No se pudo eliminar el usuario");
+      }
     } catch (error) {
-      console.error("Error deleting user:", error);
+      Alert.alert("Error", "No se pudo eliminar el usuario");
+    } finally {
+      setShowConfirmModal(false);
     }
-    setShowConfirmModal(false);
+  }
+
+  const handleSuccessEdit = () => {
+    refreshUsers(); 
+    setShowEditModal(false);
   }
 
   return (
@@ -47,7 +65,7 @@ export default function UsersListItem({ user }: { user: { id: string; name: stri
       <View className="border-b border-gray-200 my-2" />
 
       <View className="flex-row justify-end gap-2" >
-        <Pressable onPress={() => console.log("Edit user")}>
+        <Pressable onPress={() => setShowEditModal(true)}>
           <Feather name="edit" color="#000" size={24} />
         </Pressable>
         <Pressable onPress={() => setShowConfirmModal(true)}>
@@ -58,8 +76,18 @@ export default function UsersListItem({ user }: { user: { id: string; name: stri
       <ConfirmModal
         visible={showConfirmModal}
         onConfirm={handleDelete}
-        onCancel={() => setShowConfirmModal(false)}
-        message="¿Estás seguro de que deseas eliminar este usuario?"
+        onClose={() => setShowConfirmModal(false)}
+        title="Eliminar usuario"
+        description="¿Estás seguro de que deseas eliminar este usuario?"
+      />
+
+      <EditUserModal
+        visible={showEditModal}
+        userData={user}
+        onClose={() => setShowEditModal(false)}
+        onSuccess={() => {
+          handleSuccessEdit();
+        }}
       />
     </SafeAreaView>
   );
