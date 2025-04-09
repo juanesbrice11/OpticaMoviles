@@ -2,11 +2,11 @@ import React from 'react';
 import { Text, Image, View } from 'react-native';
 
 interface SalesViewerProps {
-    id: string | number;
-    client_id: string | number;
-    product_id: string | number;
-    product_image: any;
-    total: number;
+    id: number;
+    client_id: string;
+    product_id: string;
+    product_image: { uri: string };
+    total: string;
     date: string;
 }
 
@@ -22,7 +22,7 @@ export default function SalesViewerComponent({
         <View className="bg-white rounded-2xl shadow-lg shadow-black/30 w-11/12 mx-auto my-2 p-5 flex-row items-center gap-4 border border-gray-200 ">
             <Image
                 source={product_image}
-                className="w-24 h-24 rounded-lg shadow-md mx-10"
+                className="w-32 h-32 rounded-lg shadow-md mx-10"
                 resizeMode="contain"
             />
             <View className="flex-1">

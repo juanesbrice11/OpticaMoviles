@@ -3,11 +3,23 @@ import { URL } from '@/types/api';
 
 export interface Sale {
   id: number;
-  client: string;
-  glasses: number;
-  total: number;
+  client: {
+    id: string;
+    name: string;
+    lastname: string;
+    email: string;
+    phone: string;
+  };
+  glasses: {
+    id: number;
+    marca: string;
+    imagen: string;
+    precio: number;
+    material: string;
+    stock: number;
+  };
+  total: string;
   date: string;
-  product_image: string;
 }
 
 export const getSales = async (): Promise<Sale[]> => {

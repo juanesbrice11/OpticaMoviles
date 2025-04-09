@@ -52,11 +52,11 @@ export default function Sales() {
                 <SalesViewerComponent 
                   key={sale.id} 
                   id={sale.id}
-                  client_id={sale.client}
-                  product_id={sale.glasses?.toString() ?? 'N/A'}
+                  client_id={`${sale.client.name} ${sale.client.lastname}`}
+                  product_id={sale.glasses.marca}
                   total={sale.total}
                   date={sale.date}
-                  product_image={sale.product_image}
+                  product_image={{ uri: sale.glasses.imagen }}
                 />
               ))}
             </View>
