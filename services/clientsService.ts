@@ -50,3 +50,43 @@ export const createClient = async (clientData: ClientBd): Promise<ClientBd> => {
         throw error;
     }
 }; 
+
+export const updateClient = async (id: string, clientData: ClientBd): Promise<ClientBd> => {
+    try {
+        const response = await fetch(`${URL}/clients/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(clientData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al actualizar el cliente');
+        }
+
+        const data = await response.json();
+        return data.client;
+    } catch (error) {
+        console.error('Error updating client:', error);
+        throw error;
+    }
+};
+
+export const deleteClient = async (id: string): Promise<void> => {
+    try {
+        const response = await fetch(`${URL}/clients/${id}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al eliminar el cliente');
+        }
+
+        const data = await response.json();
+        return data.message;
+    } catch (error) {
+        console.error('Error deleting client:', error);
+        throw error;
+    }
+};

@@ -67,3 +67,48 @@ export const getUserById = async (id: string) => {
     throw error;
   }
 }; 
+
+export const updateUser = async (id: string, userData: { name: string; email: string; password: string; role: string }) => {
+  try {
+    const response = await fetch(`${URL}/users/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Server response:', errorData);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw error;
+  }
+}
+export const deleteUser = async (id: string) => {
+  try {
+    const response = await fetch(`${URL}/users/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Server response:', errorData);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+}
