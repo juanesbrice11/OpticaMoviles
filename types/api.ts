@@ -23,6 +23,7 @@ export interface CardProps {
     material: string;
     id: number;
     stock: number;
+    isSelected?: boolean;
 }
 
 export interface ClinicalHistory {
