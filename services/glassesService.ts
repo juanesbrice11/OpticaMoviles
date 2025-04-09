@@ -56,6 +56,21 @@ export const deleteGlasses = async (ids: number[]) => {
 
 export const updateGlasses = async (id: number, formData: FormData) => {
   try {
+    // Verificar si hay una imagen en el FormData
+    const hasImage = formData.get('imagen') !== null;
+    
+    // Si no hay imagen, enviar solo los datos de texto
+    if (!hasImage) {
+      const response = await axios.put(`${URL}/glasses/${id}`, {
+        marca: formData.get('marca'),
+        precio: formData.get('precio'),
+        material: formData.get('material'),
+        stock: formData.get('stock')
+      });
+      return response.data;
+    }
+    
+    // Si hay imagen, enviar como multipart/form-data
     const response = await axios.put(`${URL}/glasses/${id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

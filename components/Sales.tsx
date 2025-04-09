@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import SalesViewerComponent from "@/components/SalesViewer";
 import { View, Text, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { texttitile } from "./tokens";
 import { getSales, Sale } from "@/services/salesService";
 import { Ionicons } from "@expo/vector-icons";
-import FloatingMenu from "./FloatingMenu";
-import { router } from "expo-router";
+import FloatingMenu from "./molecules/FloatingMenu";
 
 export default function Sales() {
   const [sales, setSales] = useState<Sale[]>([]);
