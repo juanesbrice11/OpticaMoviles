@@ -1,6 +1,6 @@
 export const columleft = '"text-base font-semibold text-gray-700"'
 export const columright = 'text-base text-gray-900'
-export const texttitile= 'text-2xl font-bold text-center mb-2 mt-[8%] text-primary'
+export const texttitle= 'text-2xl font-bold text-center mb-2 mt-[8%] text-primary'
 export const baseinput = 'border border-gray-300 p-2 rounded-lg'
 export const cancelbutton = 'bg-red-500 rounded-md w-20 py-3 items-center'
 export const acceptbutton = 'bg-primary rounded-md w-20 py-3 items-center'

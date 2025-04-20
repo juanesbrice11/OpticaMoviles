@@ -11,6 +11,8 @@ import {
     Keyboard,
 } from "react-native";
 import { updateUser } from "@/services/usersService";
+import { DropdownMenu } from "@/components/molecules/DropdownMenu";
+import { MenuOption } from "@/components/atoms/MenuOption";
 
 interface EditUserModalProps {
     visible: boolean;
@@ -29,6 +31,7 @@ export default function EditUserModal({ visible, userData, onClose, onSuccess }:
     const [email, setEmail] = useState(userData.email);
     const [role, setRole] = useState(userData.role);
     const [isLoading, setIsLoading] = useState(false);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
 
     const handleSave = async () => {
         try {
@@ -39,7 +42,7 @@ export default function EditUserModal({ visible, userData, onClose, onSuccess }:
                 email,
                 role,
             };
-            
+
             await updateUser(String(userData.id), updatedUser);
             Alert.alert("Éxito", "Usuario actualizado correctamente");
             onSuccess();
@@ -91,12 +94,26 @@ export default function EditUserModal({ visible, userData, onClose, onSuccess }:
 
                                 <View className="mb-4">
                                     <Text className="font-semibold mb-1">Rol</Text>
-                                    <TextInput
-                                        value={role}
-                                        onChangeText={setRole}
-                                        className="border border-gray-300 rounded p-2"
-                                        editable={!isLoading}
-                                    />
+                                    <DropdownMenu
+                                        visible={dropdownVisible}
+                                        handleOpen={() => setDropdownVisible(true)}
+                                        handleClose={() => setDropdownVisible(false)}
+                                        trigger={
+                                            <Pressable
+                                                className="border border-gray-300 rounded p-2 bg-gray-50"
+                                                onPress={() => setDropdownVisible(true)}
+                                            >
+                                                <Text>{role || "Seleccionar rol"}</Text>
+                                            </Pressable>
+                                        }
+                                    >
+                                        <MenuOption onSelect={() => { setRole("admin"); setDropdownVisible(false); }}>
+                                            <Text>Admin</Text>
+                                        </MenuOption>
+                                        <MenuOption onSelect={() => { setRole("secretary"); setDropdownVisible(false); }}>
+                                            <Text>Secretary</Text>
+                                        </MenuOption>
+                                    </DropdownMenu>
                                 </View>
                             </ScrollView>
 
