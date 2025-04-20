@@ -1,9 +1,10 @@
 import { View, Text, ScrollView, Image, Pressable, TouchableOpacity, Modal, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import Card from "@/components/Card";
-import FloatingMenu from "@/components/FloatingMenu";
+import Card from "@/components/organism/Card";
+import FloatingMenu from "@/components/molecules/FloatingMenu";
 import { texttitle } from "@/components/tokens";
+
 import { getGlasses, deleteGlasses } from "@/services/glassesService";
 
 interface Glasses {
