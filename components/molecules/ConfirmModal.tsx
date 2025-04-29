@@ -1,4 +1,3 @@
-// src/components/molecules/FloatingMenu.tsx
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity } from 'react-native';
 
@@ -23,7 +22,7 @@ const FloatingMenu: React.FC<FloatingMenuProps> = ({ visible, onClose, routes })
       visible={visible}
       onRequestClose={onClose}
     >
-      <TouchableOpacity className="flex-1" onPress={onClose}>
+      <TouchableOpacity testID="overlay" className="flex-1" onPress={onClose}>
         <View className="absolute bottom-20 right-10 bg-white p-4 rounded-lg shadow-md">
           {routes.map((route, index) => (
             <TouchableOpacity
