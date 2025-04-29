@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
 export const MenuOption = ({
     onSelect,
@@ -10,7 +10,7 @@ export const MenuOption = ({
 }) => {
     return (
         <TouchableOpacity onPress={onSelect} className='p-2'>
-            {children}
+            <Text>{children}</Text>
         </TouchableOpacity>
     );
 };
