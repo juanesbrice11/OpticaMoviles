@@ -45,7 +45,7 @@ export function DropdownMenu({
                     animationType="fade"
                     onRequestClose={handleClose}>
                     <TouchableWithoutFeedback onPress={handleClose}>
-                        <View className="flex-1 bg-black/50">
+                        <View testID="modal-root" className="flex-1 bg-black/50">
                             <View
                                 className="absolute bg-white rounded-md p-2 shadow-lg"
                                 style={{

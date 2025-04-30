@@ -16,7 +16,12 @@ export default function Card({ name, imageUri, price, material, id, stock, isSel
     <View className="w-40 h-65 bg-white rounded-lg shadow-md m-2 overflow-hidden relative">
       {isSelected && (
         <View className="absolute top-2 right-2 bg-blue-500 rounded-full p-1">
-          <Ionicons name="checkmark" size={16} color="white" />
+          <Ionicons
+            testID="checkmark-icon"
+            name="checkmark"
+            size={16}
+            color="white"
+          />
         </View>
       )}
       <Image
