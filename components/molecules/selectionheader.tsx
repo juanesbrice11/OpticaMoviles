@@ -19,13 +19,14 @@ const SelectionHeader: React.FC<SelectionHeaderProps> = ({
   return (
     <View className="flex-row justify-center items-center mt-2 space-x-4">
       <TouchableOpacity
+        testID="delete-button"
         onPress={onDelete}
         disabled={selectedCount === 0}
         className={`${selectedCount === 0 ? 'opacity-50' : ''}`}
       >
         <Ionicons name="trash" size={24} color={selectedCount === 0 ? "#999" : "#FF0000"} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onCancel}>
+      <TouchableOpacity testID="cancel-button" onPress={onCancel}>
         <Text className="text-blue-500">Cancelar</Text>
       </TouchableOpacity>
     </View>

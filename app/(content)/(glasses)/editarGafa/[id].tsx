@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { getGlassesById, updateGlasses } from '@/services/glassesService';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { texttitile } from '@/components/tokens';
+import { texttitle } from '@/components/tokens';
 import { createGlassesSchema } from '@/types/schemas';
 import { z } from 'zod';
 
@@ -195,7 +195,7 @@ export default function EditGlassesScreen() {
                         />
                     </View>
 
-                    <Text className={`${texttitile} text-center`}>
+                    <Text className={`${texttitle} text-center`}>
                         Editar gafa
                     </Text>
 

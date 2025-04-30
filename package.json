@@ -69,8 +69,13 @@
       "@testing-library/jest-native/extend-expect"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(@react-native|react-native|@expo|expo|nativewind)/)"
-    ]
+      "node_modules/(?!(?:@react-native|react-native|@expo|expo|expo-font|@expo/vector-icons|expo-modules-core|nativewind)/)"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "moduleDirectories": ["node_modules", "<rootDir>"]
   },
   "private": true
 }
+
