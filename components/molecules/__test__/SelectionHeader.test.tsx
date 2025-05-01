@@ -2,12 +2,10 @@ import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import { render, fireEvent } from '@testing-library/react-native';
 
-// Mock expo-modules-core to prevent import errors
 jest.mock('expo-modules-core', () => ({
   EventEmitter: class {},
 }));
 
-// Mock Ionicons
 jest.mock('@expo/vector-icons', () => ({
   Ionicons: jest.fn().mockImplementation(() => null)
 }));

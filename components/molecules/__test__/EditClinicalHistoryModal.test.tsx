@@ -4,7 +4,6 @@ import { EditClinicalHistoryModal } from '../EditClinicalHistoryModal';
 import { updateClinicalHistory } from '@/services/clinicalHistory';
 import { Alert, Keyboard } from 'react-native';
 
-// Mock the service module
 jest.mock('../../../services/clinicalHistory', () => ({
   updateClinicalHistory: jest.fn(),
 }));

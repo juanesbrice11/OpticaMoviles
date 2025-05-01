@@ -4,7 +4,6 @@ import EditUserModal from '../EditUserModal';
 import { updateUser } from '@/services/usersService';
 import { Alert, Keyboard } from 'react-native';
 
-// Mock the user service
 jest.mock('@/services/usersService', () => ({
   updateUser: jest.fn(),
 }));
@@ -88,14 +87,10 @@ describe('EditUserModal', () => {
         onSuccess={onSuccess}
       />
     );
-    // open dropdown by pressing current role
     fireEvent.press(getByText('admin'));
-    // options should appear
     expect(getByText('Admin')).toBeTruthy();
     expect(getByText('Secretary')).toBeTruthy();
-    // select 'Secretary'
     fireEvent.press(getByText('Secretary'));
-    // dropdown closes, new role shown
     expect(queryByText('admin')).toBeNull();
     expect(getByText('secretary')).toBeTruthy();
   });
