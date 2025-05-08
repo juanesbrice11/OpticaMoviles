@@ -2,7 +2,6 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import Card from '../Card';
 
-// Mockeamos todo lo externo que puede fallar
 jest.mock('@expo/vector-icons', () => ({
   Ionicons: () => null,
 }));
@@ -23,7 +22,7 @@ describe('Card component', () => {
     stock: 5,
   };
 
-  it('should render card with correct name and price', () => {
+  it('Debe renderizar la carta con el nombre y el precio correcto', () => {
     const { getByText } = render(<Card {...defaultProps} />);
 
     expect(getByText('Gafas Modernas')).toBeTruthy();
