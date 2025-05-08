@@ -2,7 +2,6 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import FloatingMenu from '../FloatingMenu';
 
-// Mock the Link component from expo-router to simply render its children
 jest.mock('expo-router', () => ({
   Link: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
@@ -30,7 +29,6 @@ describe('FloatingMenu', () => {
     const { getByText } = render(
       <FloatingMenu visible={true} onClose={onClose} routes={routes} />
     );
-    // Each route text should be present
     expect(getByText('Home')).toBeTruthy();
     expect(getByText('Settings')).toBeTruthy();
   });
@@ -39,7 +37,6 @@ describe('FloatingMenu', () => {
     const { getByText } = render(
       <FloatingMenu visible={true} onClose={onClose} routes={routes} />
     );
-    // Press each item and assert onClose is called
     fireEvent.press(getByText('Home'));
     expect(onClose).toHaveBeenCalledTimes(1);
     fireEvent.press(getByText('Settings'));

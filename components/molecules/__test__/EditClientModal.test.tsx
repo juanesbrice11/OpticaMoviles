@@ -4,12 +4,10 @@ import EditClientModal from '../EditClientModal';
 import { updateClient } from '@/services/clientsService';
 import { Alert, Keyboard } from 'react-native';
 
-// Mock the clients service
 jest.mock('../../../services/clientsService', () => ({
   updateClient: jest.fn(),
 }));
 
-// Spy on Alert.alert and Keyboard.dismiss
 const alertSpy = jest.spyOn(Alert, 'alert');
 const keyboardDismissSpy = jest.spyOn(Keyboard, 'dismiss');
 
@@ -68,12 +66,10 @@ describe('EditClientModal', () => {
       />
     );
 
-    // Press Cancel
     fireEvent.press(getByText('Cancelar'));
     expect(keyboardDismissSpy).toHaveBeenCalled();
     expect(mockOnClose).toHaveBeenCalled();
 
-    // Press overlay to dismiss
     mockOnClose.mockClear();
     fireEvent.press(getByTestId('modal-overlay'));
     expect(mockOnClose).toHaveBeenCalled();
@@ -144,7 +140,6 @@ describe('EditClientModal', () => {
   });
 
   it('debería deshabilitar inputs durante la carga y mostrar indicador', async () => {
-    // mock promise that never resolves immediately
     let resolvePromise: () => void;
     const promise = new Promise<void>(res => { resolvePromise = res; });
     (updateClient as jest.Mock).mockReturnValue(promise);
@@ -164,12 +159,8 @@ describe('EditClientModal', () => {
       fireEvent.press(getByText('Guardar'));
     });
 
-    // inputs should be disabled (editable=false)
     expect(nameInput.props.editable).toBe(false);
-    // button text changes to "Guardando..."
     expect(getByText('Guardando...')).toBeTruthy();
-
-    // resolve the pending promise to avoid warnings
     await act(async () => resolvePromise!());
   });
 });
