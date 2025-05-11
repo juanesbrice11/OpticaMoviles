@@ -4,6 +4,8 @@ import { login, register, validateUser } from "@/services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { registerDeviceToken } from "@/services/notificationService";
 
 interface AuthProps {
     authState?: { token: string | null; authenticated: boolean | null; loading: boolean; role: string | null };
@@ -31,6 +33,7 @@ export const AuthProvider = ({ children }: any) => {
         loading: true,
         role: null
     });
+    const { expoPushToken } = usePushNotifications();
 
     useEffect(() => {
         const loadToken = async () => {
@@ -38,7 +41,6 @@ export const AuthProvider = ({ children }: any) => {
                 const token = await AsyncStorage.getItem("@access_token");
                 if (token) {
                     const decoded: any = jwtDecode(token);
-                    console.log("Token decodificado:", decoded);
                     setAuthState({
                         token,
                         authenticated: true,
@@ -86,6 +88,7 @@ export const AuthProvider = ({ children }: any) => {
                 role: decoded.role || null 
             });
             await AsyncStorage.setItem("@access_token", response.access_token);
+            await registerDeviceToken({ expoPushToken: expoPushToken }, response.access_token);
             router.replace("/(content)/(tabs)/home");
             return response;
         } catch (error) {

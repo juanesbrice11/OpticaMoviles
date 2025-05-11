@@ -10,14 +10,9 @@ export default function RootLayout() {
   const { expoPushToken, notification } = usePushNotifications(); 
   const [isConnected, setIsConnected] = useState(false);
 
-  useEffect(() => {
-    console.log("Push token", expoPushToken); 
-    console.log("Notification", notification); 
-
-   
+  useEffect(() => { 
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected as boolean);
-      console.log("NetInfo state", state); 
     });
 
     return () => {
