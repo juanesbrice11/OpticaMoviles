@@ -1,15 +1,8 @@
 import { ClientBd } from "@/types/api";
 import { URL } from "@/types/api";
 
-interface ClientResponse {
-    statusCode: number;
-    message: string;
-    client: ClientBd;
-}
-
 export const getClients = async (): Promise<ClientBd[]> => {
     try {
-        console.log(`${URL}/clients`)
         const response = await fetch(`${URL}/clients`);
         const data = await response.json();
         return data.clients;
