@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
-import { registerDeviceToken } from "@/services/notificationService";
+import { deactiveDeviceToken, registerDeviceToken } from "@/services/notificationService";
 
 interface AuthProps {
     authState?: { token: string | null; authenticated: boolean | null; loading: boolean; role: string | null };
@@ -99,11 +99,15 @@ export const AuthProvider = ({ children }: any) => {
 
     const Logout = async () => {
         try {
+            const token = await AsyncStorage.getItem("@access_token");  
+            if (token) {
+                await deactiveDeviceToken({ expoPushToken: expoPushToken }, token);
+            }
             await AsyncStorage.clear();
             setAuthState({ token: null, authenticated: false, loading: false, role: null });
             router.replace("/(auth)/login");
         } catch (error) {
-            console.error("Error al limpiar AsyncStorage:", error);
+            console.error("Error al cerrar sesión:", error);
         }
     };
 
