@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { texttitile } from '../tokens';
+import { texttitle } from '../tokens';
 
 interface TitleTextProps {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ interface TitleTextProps {
 
 const TitleText: React.FC<TitleTextProps> = ({ children }) => {
   return (
-    <Text className={`${texttitile} text-center`}>
+    <Text className={`${texttitle} text-center`}>
       {children}
     </Text>
   );

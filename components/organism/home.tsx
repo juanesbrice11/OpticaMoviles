@@ -1,10 +1,10 @@
 import { View, Text, ScrollView, Image, Pressable, TouchableOpacity, Modal, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
-
 import Card from "@/components/organism/Card";
-import FloatingMenu from "../molecules/FloatingMenu";
-import { texttitile } from "../tokens";
+import FloatingMenu from "@/components/molecules/FloatingMenu";
+import { texttitle } from "@/components/tokens";
+
 import { getGlasses, deleteGlasses } from "@/services/glassesService";
 
 interface Glasses {
@@ -94,7 +94,7 @@ const Home = () => {
         />
       </View>
       <View className="px-4">
-        <Text className={`${texttitile} text-center`}>Inventario</Text>
+        <Text className={`${texttitle} text-center`}>Inventario</Text>
         {isSelectionMode && (
           <View className="flex-row justify-center items-center mt-2 space-x-4">
             <TouchableOpacity

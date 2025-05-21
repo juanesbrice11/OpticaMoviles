@@ -54,7 +54,7 @@ export const EditClinicalHistoryModal: React.FC<EditClinicalHistoryModalProps> =
       onRequestClose={handleDismiss}
     >
       <TouchableWithoutFeedback onPress={handleDismiss}>
-        <View className="flex-1 justify-center items-center bg-black/50">
+        <View testID="modal-overlay" className="flex-1 justify-center items-center bg-black/50">
           <TouchableWithoutFeedback onPress={e => e.stopPropagation()}>
             <View className="bg-white p-4 rounded-lg w-4/5 max-h-[80%]">
               <Text className="text-lg font-bold mb-4">Editar Historia Clínica</Text>

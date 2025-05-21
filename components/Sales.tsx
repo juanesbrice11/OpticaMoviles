@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import SalesViewerComponent from "@/components/SalesViewer";
-import { View, Text, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
-import { texttitile } from "./tokens";
-import { getSales, Sale } from "@/services/salesService";
+import { View, Text, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { texttitle } from "./tokens";
+import { getSales, Sale, deleteSale } from "@/services/salesService";
 import { Ionicons } from "@expo/vector-icons";
 import FloatingMenu from "./molecules/FloatingMenu";
+import EditSaleModal from "../components/EditSaleModal"
 
 export default function Sales() {
   const [sales, setSales] = useState<Sale[]>([]);
@@ -82,7 +83,7 @@ export default function Sales() {
           className="w-full h-44"
         />
 
-        <Text className={`${texttitile}`}>Ventas</Text>
+        <Text className={`${texttitle}`}>Ventas</Text>
         <ScrollView className="w-full">
           {loading ? (
             <Text className="text-center mt-4">Cargando...</Text>

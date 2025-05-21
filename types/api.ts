@@ -1,4 +1,5 @@
-export const URL = `http://${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_API_PORT}`;
+export const URL = `http://${process.env.EXPO_PUBLIC_API_URL}:3000`;
+// export const URL = `https://${process.env.EXPO_PUBLIC_API_URL_DEPLOY}`;
 
 export interface ClientBd {
     id: string;
@@ -34,3 +35,8 @@ export interface ClinicalHistory {
     cc: string[];
     ae: string[];
 }
+
+export interface DeviceToken {
+    expoPushToken: string;
+}
+
