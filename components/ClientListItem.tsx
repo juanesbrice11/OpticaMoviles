@@ -22,7 +22,34 @@ export default function ClientListItem({ client, refreshClients }: ClientListIte
   async function handleDelete() {
     try {
       const result = await deleteClient(client.id);
-      refreshClients();
+      
+      if (result.hasSales) {
+        Alert.alert(
+          "No se puede eliminar el cliente",
+          `${result.message}\n\nIDs de ventas asociadas: ${result.salesIds?.join(', ')}`,
+          [
+            {
+              text: "Ver ventas",
+              onPress: () => {
+                router.push({
+                  pathname: "/sales",
+                  params: { 
+                    clientId: client.id,
+                    salesIds: result.salesIds?.join(',')
+                  }
+                });
+              }
+            },
+            {
+              text: "Entendido",
+              style: "cancel"
+            }
+          ]
+        );
+      } else {
+        Alert.alert("Éxito", "Cliente eliminado correctamente");
+        refreshClients();
+      }
     } catch (error) {
       Alert.alert("Error", "No se pudo eliminar el cliente");
     } finally {

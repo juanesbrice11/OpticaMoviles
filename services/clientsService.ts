@@ -67,18 +67,26 @@ export const updateClient = async (id: string, clientData: ClientBd): Promise<Cl
     }
 };
 
-export const deleteClient = async (id: string): Promise<void> => {
+export const deleteClient = async (id: string): Promise<{ message: string; hasSales?: boolean; salesIds?: number[] }> => {
     try {
         const response = await fetch(`${URL}/clients/${id}`, {
             method: 'DELETE',
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Error al eliminar el cliente');
+            if (response.status === 409) {
+                return {
+                    message: data.message,
+                    hasSales: data.hasSales,
+                    salesIds: data.salesIds
+                };
+            }
+            throw new Error(data.message || 'Error al eliminar el cliente');
         }
 
-        const data = await response.json();
-        return data.message;
+        return data;
     } catch (error) {
         console.error('Error deleting client:', error);
         throw error;
