@@ -29,7 +29,7 @@ export default function SalesViewerComponent({
     return (
         <View className="bg-white rounded-2xl shadow-lg shadow-black/30 w-11/12 mx-auto my-2 p-5 flex-row items-center gap-4 border border-gray-200">
             <Image
-                source={product_image}
+                source={require('@/assets/default-glasses.jpg')}
                 className="w-32 h-32 rounded-lg shadow-md mx-10"
                 resizeMode="contain"
             />

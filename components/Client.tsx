@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Image, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClientBd } from "@/types/api";
 import { useRouter } from "expo-router";
@@ -18,6 +18,7 @@ export default function Client() {
   const [clients, setClients] = useState<ClientBd[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchClients = async () => {
     setIsLoading(true);
@@ -34,6 +35,16 @@ export default function Client() {
   useEffect(() => {
     fetchClients();
   }, []);
+
+  const filteredClients = clients.filter((client) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      client.name.toLowerCase().includes(searchLower) ||
+      client.lastname.toLowerCase().includes(searchLower) ||
+      client.email?.toLowerCase().includes(searchLower) ||
+      client.id.toLowerCase().includes(searchLower)
+    );
+  });
 
   if (isLoading) {
     return (
@@ -78,17 +89,48 @@ export default function Client() {
           Clientes
         </Text>
 
-        <ScrollView>
-          <GenericSearchBar
-            data={clients}
-            placeholder="Buscar clientes..."
-            filterPredicate={(client, query) =>
-              client.name.toLowerCase().includes(query.toLowerCase()) ||
-              client.email?.toLowerCase().includes(query.toLowerCase()) ||
-              client.id.includes(query)
-            }
-            renderItem={renderClient}
-          />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="px-4 py-2">
+            <View className="flex-row items-center bg-white border border-gray-300 rounded-lg shadow-sm px-4 py-3">
+              <Ionicons name="search" size={20} color="#888" className="mr-2" />
+              <TextInput
+                placeholder="Buscar clientes..."
+                placeholderTextColor="#888"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                className="flex-1 text-base"
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery("")}>
+                  <Ionicons name="close-circle" size={20} color="#888" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+
+        <ScrollView className="flex-1">
+          {filteredClients.length === 0 ? (
+            <View className="items-center justify-center p-4">
+              <Ionicons name="people-outline" size={64} color="#1769AA" />
+              <Text className="text-lg text-gray-600 text-center mt-4">
+                No hay clientes para mostrar
+              </Text>
+              <Text className="text-sm text-gray-500 text-center mt-2">
+                Presiona el botón + para crear un nuevo cliente
+              </Text>
+            </View>
+          ) : (
+            <View className="px-4">
+              {filteredClients.map((client) => (
+                <ClientListItem 
+                  key={client.id} 
+                  client={client} 
+                  refreshClients={fetchClients} 
+                />
+              ))}
+            </View>
+          )}
         </ScrollView>
 
         <CreateClientModal
@@ -106,7 +148,7 @@ export default function Client() {
           ]}
           onSelectRoute={handleMenuAction}
         />
-        <View className="absolute bottom-0 right-0 mb-4 mr-4">
+        <View className="absolute bottom-0 left-0 mb-4 ml-4">
           <TouchableOpacity onPress={() => setMenuVisible(true)}>
             <Ionicons name="add-circle" size={60} color="#1769AA" />
           </TouchableOpacity>

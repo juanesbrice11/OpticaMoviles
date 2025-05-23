@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
-import UsersListItem from "@/components/UsersListItem";
-import GenericSearchBar from "@/components/SearchBar";
-import { getUsers } from "@/services/usersService";
+import { View, Text, Image, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { User } from "@/types/api";
+import { useRouter } from "expo-router";
+import { getUsers } from "@/services/usersService";
 import CreateUserModal from "./molecules/CreateUserModal";
+import UsersListItem from "@/components/UsersListItem";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -28,6 +29,15 @@ export default function Users() {
     fetchUsers();
   }, []);
 
+  const filteredUsers = users.filter((user) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      user.name.toLowerCase().includes(searchLower) ||
+      user.email.toLowerCase().includes(searchLower) ||
+      user.id.toLowerCase().includes(searchLower)
+    );
+  });
+
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -35,10 +45,6 @@ export default function Users() {
       </View>
     );
   }
-
-  const renderUser = ({ item }: { item: any }) => (
-    <UsersListItem user={item} refreshUsers={fetchUsers} />
-  );
 
   const handleCreateSuccess = () => {
     setCreateModalVisible(false);
@@ -61,17 +67,49 @@ export default function Users() {
         <Text className="text-2xl font-bold text-center mb-2 mt-[8%] text-primary">
           Usuarios
         </Text>
-        <ScrollView>
-          <GenericSearchBar
-            data={users}
-            placeholder="Buscar usuarios..."
-            filterPredicate={(user, query) =>
-              user.name.toLowerCase().includes(query.toLowerCase()) ||
-              user.email.toLowerCase().includes(query.toLowerCase()) ||
-              user.id.includes(query)
-            }
-            renderItem={renderUser}
-          />
+
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="px-4 py-2">
+            <View className="flex-row items-center bg-white border border-gray-300 rounded-lg shadow-sm px-4 py-3">
+              <Ionicons name="search" size={20} color="#888" className="mr-2" />
+              <TextInput
+                placeholder="Buscar usuarios..."
+                placeholderTextColor="#888"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                className="flex-1 text-base"
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery("")}>
+                  <Ionicons name="close-circle" size={20} color="#888" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+
+        <ScrollView className="flex-1">
+          {filteredUsers.length === 0 ? (
+            <View className="items-center justify-center p-4">
+              <Ionicons name="people-outline" size={64} color="#1769AA" />
+              <Text className="text-lg text-gray-600 text-center mt-4">
+                No hay usuarios para mostrar
+              </Text>
+              <Text className="text-sm text-gray-500 text-center mt-2">
+                Presiona el botón + para crear un nuevo usuario
+              </Text>
+            </View>
+          ) : (
+            <View className="px-4">
+              {filteredUsers.map((user) => (
+                <UsersListItem 
+                  key={user.id} 
+                  user={user} 
+                  refreshUsers={fetchUsers} 
+                />
+              ))}
+            </View>
+          )}
         </ScrollView>
 
         <CreateUserModal
@@ -80,7 +118,7 @@ export default function Users() {
           onSuccess={handleCreateSuccess}
         />
 
-        <View className="absolute bottom-0 right-0 mb-4 mr-4">
+        <View className="absolute bottom-0 left-0 mb-4 ml-4">
           <TouchableOpacity onPress={() => setCreateModalVisible(true)}>
             <Ionicons name="add-circle" size={60} color="#1769AA" />
           </TouchableOpacity>
@@ -88,4 +126,4 @@ export default function Users() {
       </View>
     </KeyboardAvoidingView>
   );
-};
+}

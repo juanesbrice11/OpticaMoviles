@@ -5,6 +5,7 @@ import Card from "@/components/organism/Card";
 import FloatingMenu from "@/components/molecules/FloatingMenu";
 import { texttitle } from "@/components/tokens";
 import { useRouter } from "expo-router";
+import GlassesSearchBar from "@/components/GlassesSearchBar";
 
 import { getGlasses, deleteGlasses } from "@/services/glassesService";
 
@@ -116,35 +117,20 @@ const Home = () => {
           </View>
         )}
       </View>
-      <ScrollView>
-        {loading ? (
-          <Text className="text-center mt-4">Cargando...</Text>
-        ) : error ? (
-          <Text className="text-center mt-4 text-red-500">Error: {error}</Text>
-        ) : (
-          <View className="flex flex-row flex-wrap justify-center p-4">
-            {glasses.map((item) => (
-              <Pressable
-                key={item.id}
-                onPress={() => handlePress(item.id)}
-                onLongPress={() => handleLongPress(item.id)}
-                className={`m-2 ${selectedGlasses.includes(item.id) ? 'opacity-70' : ''}`}
-              >
-                <Card
-                  name={item.marca}
-                  imageUri={item.imagen}
-                  price={item.precio}
-                  material={item.material}
-                  id={item.id}
-                  stock={item.stock}
-                  isSelected={selectedGlasses.includes(item.id)}
-                  onRefresh={fetchGlasses}
-                />
-              </Pressable>
-            ))}
-          </View>
-        )}
-      </ScrollView>
+      
+      {loading ? (
+        <Text className="text-center mt-4">Cargando...</Text>
+      ) : error ? (
+        <Text className="text-center mt-4 text-red-500">Error: {error}</Text>
+      ) : (
+        <GlassesSearchBar
+          data={glasses}
+          onPress={handlePress}
+          onLongPress={handleLongPress}
+          selectedItems={selectedGlasses}
+          onRefresh={fetchGlasses}
+        />
+      )}
 
       <FloatingMenu
         visible={menuVisible}

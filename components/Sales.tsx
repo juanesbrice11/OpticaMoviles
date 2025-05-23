@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import SalesViewerComponent from "@/components/SalesViewer";
-import { View, Text, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert, Pressable, ActivityIndicator, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { texttitle } from "./tokens";
 import { getSales, Sale, deleteSale } from "@/services/salesService";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import FloatingMenu from "./molecules/FloatingMenu";
 import EditSaleModal from "../components/EditSaleModal";
 import CreateSaleModal from "./molecules/CreateSaleModal";
@@ -11,6 +11,11 @@ import { useLocalSearchParams } from "expo-router";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import ConfirmModal from "./molecules/ConfirmModal";
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/types/navigation';
+
+type SalesScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Sales'>;
 
 export default function Sales() {
   const params = useLocalSearchParams();
@@ -23,10 +28,14 @@ export default function Sales() {
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { authState } = useAuth();
+  const navigation = useNavigation<SalesScreenNavigationProp>();
 
   const fetchSales = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const data = await getSales();
       if (params.salesIds) {
         const salesIds = (params.salesIds as string).split(',').map(Number);
@@ -75,10 +84,35 @@ export default function Sales() {
     setShowDeleteModal(true);
   };
 
+  const filteredSales = sales.filter((sale) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      `${sale.client.name} ${sale.client.lastname}`.toLowerCase().includes(searchLower) ||
+      sale.glasses.marca.toLowerCase().includes(searchLower) ||
+      sale.id.toString().includes(searchLower) ||
+      sale.total.toString().includes(searchLower) ||
+      sale.date.toLowerCase().includes(searchLower)
+    );
+  });
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text className="text-center mt-4">Cargando...</Text>
+        <ActivityIndicator size="large" color="#1769AA" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text className="text-red-500 text-lg">{error}</Text>
+        <Pressable 
+          className="mt-4 bg-blue-500 px-4 py-2 rounded-lg"
+          onPress={fetchSales}
+        >
+          <Text className="text-white">Reintentar</Text>
+        </Pressable>
       </View>
     );
   }
@@ -97,10 +131,31 @@ export default function Sales() {
         <Text className={`${texttitle}`}>
           {params.salesIds ? "Ventas asociadas al cliente" : "Ventas"}
         </Text>
+
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="px-4 py-2">
+            <View className="flex-row items-center bg-white border border-gray-300 rounded-lg shadow-sm px-4 py-3">
+              <Ionicons name="search" size={20} color="#888" className="mr-2" />
+              <TextInput
+                placeholder="Buscar por cliente, producto, ID..."
+                placeholderTextColor="#888"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                className="flex-1 text-base"
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery("")}>
+                  <Ionicons name="close-circle" size={20} color="#888" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+
         <ScrollView className="w-full">
           {error ? (
             <Text className="text-center mt-4 text-red-500">Error: {error}</Text>
-          ) : sales.length === 0 ? (
+          ) : filteredSales.length === 0 ? (
             <View className="items-center justify-center p-4">
               <Ionicons name="cart-outline" size={64} color="#1769AA" />
               <Text className="text-lg text-gray-600 text-center mt-4">
@@ -114,7 +169,7 @@ export default function Sales() {
             </View>
           ) : (
             <View className="items-center">
-              {sales.map((sale) => (
+              {filteredSales.map((sale) => (
                 <SalesViewerComponent 
                   key={sale.id} 
                   id={sale.id}
@@ -134,7 +189,7 @@ export default function Sales() {
         {!params.salesIds && (
           <>
             <TouchableOpacity 
-              className="absolute bottom-0 right-0 mb-4 mr-4"
+              className="absolute bottom-0 left-0 mb-4 ml-4"
               onPress={() => setCreateModalVisible(true)}
             >
               <Ionicons name="add-circle" size={60} color="#1769AA" />
