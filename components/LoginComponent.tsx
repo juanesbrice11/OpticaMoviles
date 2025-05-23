@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { LoginSchema, loginSchema } from "@/types/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,14 +11,11 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     Platform,
+    Alert,
 } from "react-native";
 import { useAuth } from "@/context/AuthContext";
 
-import { login } from "@/services/authService";
-
-
 export default function LoginComponent() {
-    const router = useRouter();
     const { onLogin } = useAuth();
 
     const {
@@ -34,11 +30,9 @@ export default function LoginComponent() {
 
     const onSubmit = async (data: LoginSchema) => {
         try {
-            
-            const response = await onLogin!(data);
-            // router.replace("/(content)/(tabs)/home");
+            await onLogin!(data);
         } catch (error) {
-            console.error(error);
+            Alert.alert("Error", (error as Error).message);
         }
 
     };
