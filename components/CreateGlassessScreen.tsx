@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import * as ImagePicker from 'expo-image-picker';
 import { createGlasses } from '@/services/glassesService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { acceptbutton, cancelbutton, texttitle } from './tokens';
@@ -13,13 +12,11 @@ interface FormErrors {
     precio?: string;
     material?: string;
     stock?: string;
-    imagen?: string;
 }
 
 export default function CreateGlassesScreen() {
     const [formData, setFormData] = useState({
         marca: '',
-        imagen: '',
         precio: '',
         material: '',
         stock: ''
@@ -68,27 +65,6 @@ export default function CreateGlassesScreen() {
         }));
     };
 
-    const pickImage = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        
-        if (status !== 'granted') {
-            alert('Lo sentimos, necesitamos permisos para acceder a la galería');
-            return;
-        }
-
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: "images",
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            setFormData(prev => ({ ...prev, imagen: result.assets[0].uri }));
-            setErrors(prev => ({ ...prev, imagen: '' }));
-        }
-    };
-
     const validateForm = () => {
         const newErrors: FormErrors = {};
         
@@ -96,9 +72,6 @@ export default function CreateGlassesScreen() {
         newErrors.material = validateField('material', formData.material);
         newErrors.precio = validateField('precio', formData.precio);
         newErrors.stock = validateField('stock', formData.stock);
-        if (!formData.imagen) {
-            newErrors.imagen = 'La imagen es requerida';
-        }
 
         setErrors(newErrors);
         return !Object.values(newErrors).some(error => error !== '');
@@ -119,17 +92,8 @@ export default function CreateGlassesScreen() {
             data.append('material', formData.material.trim());
             data.append('stock', formData.stock);
 
-            const uriParts = formData.imagen.split('.');
-            const fileType = uriParts[uriParts.length - 1];
-            
-            data.append('imagen', {
-                uri: formData.imagen,
-                type: 'image/jpeg',
-                name: 'photo.jpg',
-            } as any);
-
             await createGlasses(data);
-            router.push('/home');
+            router.back();
         } catch (err) {
             console.error('Error completo:', JSON.stringify(err));
             setError('Error al crear la gafa');
@@ -168,22 +132,9 @@ export default function CreateGlassesScreen() {
                             {errors.marca ? <Text className="text-red-500 text-sm">{errors.marca}</Text> : null}
                         </View>
 
-                        <View>
+                        <View className="bg-gray-100 p-4 rounded-lg">
                             <Text className="text-gray-600 mb-1">Imagen</Text>
-                            <TouchableOpacity
-                                onPress={pickImage}
-                                className={`border rounded-lg p-2 items-center ${errors.imagen ? 'border-red-500' : 'border-gray-300'}`}
-                            >
-                                {formData.imagen ? (
-                                    <Image
-                                        source={{ uri: formData.imagen }}
-                                        className="w-32 h-32 rounded-lg"
-                                    />
-                                ) : (
-                                    <Text>Seleccionar imagen</Text>
-                                )}
-                            </TouchableOpacity>
-                            {errors.imagen ? <Text className="text-red-500 text-sm">{errors.imagen}</Text> : null}
+                            <Text className="text-gray-500 italic">Selección de imagen disponible próximamente</Text>
                         </View>
 
                         <View>
@@ -230,7 +181,7 @@ export default function CreateGlassesScreen() {
 
                         <View className="flex-row w-11/12 mt-4 justify-end gap-2">
                             <TouchableOpacity
-                                onPress={() => router.push('/home')}
+                                onPress={() => router.back()}
                                 className={cancelbutton}
                             >
                                 <Text className="text-white font-bold text-center">
