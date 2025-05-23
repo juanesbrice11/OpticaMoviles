@@ -1,18 +1,21 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity } from 'react-native';
 
-export interface Route {
-  url: string;
-  text: string;
-}
-
-interface FloatingMenuProps {
+interface ConfirmModalProps {
   visible: boolean;
   onClose: () => void;
-  routes: Route[];
+  onConfirm: () => void;
+  title: string;
+  description: string;
 }
 
-const FloatingMenu: React.FC<FloatingMenuProps> = ({ visible, onClose, routes }) => {
+const ConfirmModal: React.FC<ConfirmModalProps> = ({
+  visible,
+  onClose,
+  onConfirm,
+  title,
+  description,
+}) => {
   if (!visible) return null;
 
   return (
@@ -22,20 +25,28 @@ const FloatingMenu: React.FC<FloatingMenuProps> = ({ visible, onClose, routes })
       visible={visible}
       onRequestClose={onClose}
     >
-      <TouchableOpacity testID="overlay" className="flex-1" onPress={onClose}>
-        <View className="absolute bottom-20 right-10 bg-white p-4 rounded-lg shadow-md">
-          {routes.map((route, index) => (
+      <View className="flex-1 justify-center items-center bg-black/50">
+        <View className="bg-white p-6 rounded-lg w-4/5">
+          <Text className="text-lg font-bold mb-4">{title}</Text>
+          <Text className="mb-6">{description}</Text>
+          <View className="flex-row justify-end space-x-4">
             <TouchableOpacity
-              key={index}
-              className="py-2"
+              onPress={onClose}
+              className="px-4 py-2 rounded-lg bg-gray-200"
             >
-              <Text className="text-blue-500">{route.text}</Text>
+              <Text>Cancelar</Text>
             </TouchableOpacity>
-          ))}
+            <TouchableOpacity
+              onPress={onConfirm}
+              className="px-4 py-2 rounded-lg bg-red-500"
+            >
+              <Text className="text-white font-bold">Eliminar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </TouchableOpacity>
+      </View>
     </Modal>
   );
 };
 
-export default FloatingMenu;
+export default ConfirmModal;

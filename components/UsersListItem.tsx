@@ -13,20 +13,16 @@ interface UsersListItemProps {
 }
 
 export default function UsersListItem({ user, refreshUsers }: UsersListItemProps) {
-
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
   async function handleDelete() {
     try {
-      const result = await deleteUser(user.id);
-      if (result.statusCode === 200) {
-        Alert.alert("Éxito", "Usuario eliminado correctamente");
-        refreshUsers(); 
-      } else {
-        Alert.alert("Error", "No se pudo eliminar el usuario");
-      }
+      await deleteUser(user.id);
+      Alert.alert("Éxito", "Usuario eliminado correctamente");
+      refreshUsers();
     } catch (error) {
+      console.error("Error deleting user:", error);
       Alert.alert("Error", "No se pudo eliminar el usuario");
     } finally {
       setShowConfirmModal(false);
@@ -34,7 +30,7 @@ export default function UsersListItem({ user, refreshUsers }: UsersListItemProps
   }
 
   const handleSuccessEdit = () => {
-    refreshUsers(); 
+    refreshUsers();
     setShowEditModal(false);
   }
 
@@ -64,7 +60,7 @@ export default function UsersListItem({ user, refreshUsers }: UsersListItemProps
 
       <View className="border-b border-gray-200 my-2" />
 
-      <View className="flex-row justify-end gap-2" >
+      <View className="flex-row justify-end gap-2">
         <Pressable onPress={() => setShowEditModal(true)}>
           <Feather name="edit" color="#000" size={24} />
         </Pressable>
@@ -85,9 +81,7 @@ export default function UsersListItem({ user, refreshUsers }: UsersListItemProps
         visible={showEditModal}
         userData={user}
         onClose={() => setShowEditModal(false)}
-        onSuccess={() => {
-          handleSuccessEdit();
-        }}
+        onSuccess={handleSuccessEdit}
       />
     </SafeAreaView>
   );
