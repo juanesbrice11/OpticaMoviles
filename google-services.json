@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "200146756327",
+    "project_id": "notifications-aaba8",
+    "storage_bucket": "notifications-aaba8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:200146756327:android:e81053ebbe90028a2eb842",
+        "android_client_info": {
+          "package_name": "com.juanesbrice.Optica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnZIU_8gXI-vlJ7e_k4mvw-ea-xXMgre8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
