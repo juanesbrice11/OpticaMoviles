@@ -5,7 +5,7 @@ import { registerUser } from "@/services/usersService"; // Asegúrate de tener e
 import { userSchema, UserSchema } from "@/types/schemas";
 import { FormComponent, FormField } from "./Form";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { texttitile } from "./tokens";
+import { texttitle } from "./tokens";
 
 export default function CreateUserScreen() {
   const router = useRouter();
@@ -106,7 +106,7 @@ export default function CreateUserScreen() {
           className="w-full h-44"
         />
       </View>
-      <Text className={`${texttitile}`}>Crear Usuario</Text>
+      <Text className={`${texttitle}`}>Crear Usuario</Text>
 
         <FormComponent<UserSchema>
           schema={userSchema}

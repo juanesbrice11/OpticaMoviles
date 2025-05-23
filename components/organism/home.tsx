@@ -87,11 +87,6 @@ const Home = () => {
     }
   };
 
-  const handleMenuAction = (url: string) => {
-    setMenuVisible(false);
-    router.push(url as any);
-  };
-
   return (
     <View className="flex-1 bg-white">
       <View className="items-center">
@@ -143,6 +138,7 @@ const Home = () => {
                   id={item.id}
                   stock={item.stock}
                   isSelected={selectedGlasses.includes(item.id)}
+                  onRefresh={fetchGlasses}
                 />
               </Pressable>
             ))}
@@ -154,9 +150,12 @@ const Home = () => {
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
         routes={[
-          { url: "/crearGafa", text: "Crear Gafa" },
+          { url: "/crearGafa", text: "Crear Gafa" }
         ]}
-        onSelectRoute={handleMenuAction}
+        onSelectRoute={(url) => {
+          setMenuVisible(false);
+          router.push(url);
+        }}
       />
       <View className="absolute bottom-0 right-0 mb-4 mr-4">
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
