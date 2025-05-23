@@ -1,5 +1,5 @@
 export const URL = `http://${process.env.EXPO_PUBLIC_API_URL}:3000`;
-//export const URL = `https://${process.env.EXPO_PUBLIC_API_URL_DEPLOY}`;
+// export const URL = `https://${process.env.EXPO_PUBLIC_API_URL}`;
 
 export interface ClientBd {
     id: string;

@@ -14,6 +14,7 @@ import ConfirmModal from "./molecules/ConfirmModal";
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types/navigation';
+import { getLocalSales } from "@/services/localSalesService";
 
 type SalesScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Sales'>;
 
@@ -37,6 +38,7 @@ export default function Sales() {
       setLoading(true);
       setError(null);
       const data = await getSales();
+      // const data = await getLocalSales();
       if (params.salesIds) {
         const salesIds = (params.salesIds as string).split(',').map(Number);
         const filteredSales = data.filter(sale => salesIds.includes(sale.id));

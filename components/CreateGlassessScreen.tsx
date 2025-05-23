@@ -15,8 +15,8 @@ interface FormErrors {
 }
 
 const MARCAS = [
-    'RayBan', 'Oakley', 'Gucci', 'Tommy Hilfiger', 'Prada',
-    'Michael Kors', 'Carrera', 'Persol', 'Maui Jim', 'Warby Parker'
+    'RayBan', 'Oakley', 'Gucci', 'Tommy', 'Prada',
+    'Kors', 'Carrera', 'Persol', 'Maui', 'Warby'
 ];
 
 const MATERIALES = [

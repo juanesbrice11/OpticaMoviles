@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { createSale } from "@/services/salesService";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { createLocalSale } from "@/services/localSalesService";
 
 interface CreateSaleModalProps {
     visible: boolean;
@@ -44,7 +45,7 @@ export default function CreateSaleModal({ visible, onClose, onSuccess }: CreateS
                 date: date.toISOString().split('T')[0]
             };
 
-            await createSale(saleData);
+            await createLocalSale(saleData);
             Alert.alert("Éxito", "Venta creada correctamente");
             onSuccess();
             resetForm();
