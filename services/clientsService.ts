@@ -33,17 +33,18 @@ export const createClient = async (clientData: ClientBd): Promise<ClientBd> => {
             body: JSON.stringify(clientData)
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Error al crear el cliente');
+            throw new Error(data.message || 'Error al crear el cliente');
         }
 
-        const data = await response.json();
         return data.client;
     } catch (error) {
         console.error('Error creating client:', error);
         throw error;
     }
-}; 
+};
 
 export const updateClient = async (id: string, clientData: ClientBd): Promise<ClientBd> => {
     try {

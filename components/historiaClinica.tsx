@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 import { ClientBd } from "@/types/api";
-import { getClients } from "@/services/clientsService";
 import { createClinicalHistory } from "@/services/clinicalHistory";
 import { useRouter } from "expo-router";
 import { cancelbutton, acceptbutton } from "./tokens";
+import ClientSearchBar from "./molecules/ClientSearchBar";
 
 interface FormErrors {
     clientId?: string;
@@ -21,40 +21,9 @@ const initialRows = [
 
 const HistoriaClinica = () => {
     const router = useRouter();
-    const [clientId, setClientId] = useState("");
     const [selectedClient, setSelectedClient] = useState<ClientBd | null>(null);
-    const [clients, setClients] = useState<ClientBd[]>([]);
     const [rows, setRows] = useState(initialRows);
-    const [isLoading, setIsLoading] = useState(true);
     const [errors, setErrors] = useState<FormErrors>({});
-
-    useEffect(() => {
-        const fetchClients = async () => {
-            try {
-                const apiClients = await getClients();
-                setClients(apiClients);
-            } catch (error) {
-                console.error("Error al cargar clientes:", error);
-                Alert.alert("Error", "No se pudieron cargar los clientes");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchClients();
-    }, []);
-
-    const validateClientId = (text: string) => {
-        if (!text.trim()) {
-            return 'El ID del cliente es requerido';
-        }
-        if (!/^[A-Za-z0-9]+$/.test(text)) {
-            return 'El ID del cliente solo puede contener letras y números';
-        }
-        if (text.length > 20) {
-            return 'El ID del cliente no puede tener más de 20 caracteres';
-        }
-        return '';
-    };
 
     const validateVisionValue = (value: string) => {
         if (!value.trim()) {
@@ -73,24 +42,6 @@ const HistoriaClinica = () => {
         return '';
     };
 
-    const handleSearch = () => {
-        const error = validateClientId(clientId);
-        if (error) {
-            setErrors(prev => ({ ...prev, clientId: error }));
-            return;
-        }
-
-        const foundClient = clients.find(client => client.id === clientId);
-        if (foundClient) {
-            setSelectedClient(foundClient);
-            setErrors(prev => ({ ...prev, clientId: '' }));
-        } else {
-            Alert.alert("Cliente no encontrado", "Verifique el ID ingresado");
-            setSelectedClient(null);
-            setErrors(prev => ({ ...prev, clientId: 'Cliente no encontrado' }));
-        }
-    };
-
     const handleInputChange = (category: string, field: "SC" | "CC" | "AE", value: string) => {
         setRows(prevRows =>
             prevRows.map(row =>
@@ -102,7 +53,7 @@ const HistoriaClinica = () => {
         const error = validateVisionValue(value);
         setErrors(prev => ({
             ...prev,
-            [field.toLowerCase()]: prevRows.map(row => 
+            [field.toLowerCase()]: rows.map(row => 
                 row.category === category ? error : ''
             )
         }));
@@ -171,112 +122,108 @@ const HistoriaClinica = () => {
         }
     };
 
-    if (isLoading) {
-        return (
-            <View className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" color="#1769AA" />
-            </View>
-        );
-    }
-
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
-            <View className="flex-1 bg-white relative">
-                <View className="items-center">
-                    <Image source={require("@/assets/images/top.png")} className="w-full h-44" />
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === "ios" ? "padding" : "height"} 
+            className="flex-1 bg-white"
+        >
+            <View className="items-center absolute top-0 left-0 right-0 z-10">
+                <Image source={require("@/assets/images/top.png")} className="w-full h-44" />
+            </View>
+
+            {!selectedClient ? (
+                <View className="flex-1 mt-44">
+                    <View className="flex-1 px-4">
+                        <Text className="text-2xl font-bold text-center mb-4 text-primary">Seleccionar Cliente</Text>
+                        
+                        <ClientSearchBar 
+                            onSelectClient={setSelectedClient}
+                            selectedClient={selectedClient}
+                        />
+                    </View>
                 </View>
-
-                <Text className="text-2xl font-bold text-center mb-4 text-primary">Buscar Cliente</Text>
-                <View className="mx-6">
-                    <TextInput
-                        className={`border rounded p-2 bg-white ${errors.clientId ? 'border-red-500' : 'border-gray-300'}`}
-                        placeholder="Ingrese el ID del cliente"
-                        value={clientId}
-                        onChangeText={(text) => {
-                            setClientId(text);
-                            setErrors(prev => ({ ...prev, clientId: validateClientId(text) }));
-                        }}
-                        maxLength={20}
-                    />
-                    {errors.clientId ? <Text className="text-red-500 text-sm mt-1">{errors.clientId}</Text> : null}
-                    <TouchableOpacity className="bg-primary py-2 rounded-lg mt-2 items-center mx-10" onPress={handleSearch}>
-                        <Text className="text-white font-bold">Buscar</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {selectedClient && (
-                    <Text className="text-lg font-bold text-center my-2 text-gray-700">
-                        Cliente: {selectedClient.name} {selectedClient.lastname}
-                    </Text>
-                )}
-
-                <Text className="text-2xl font-bold text-center my-4 text-primary">Historia Clínica</Text>
-
-                <ScrollView className="px-4">
-                    {rows.map((row, index) => (
-                        <View key={row.category} className="mb-6">
-                            <Text className="text-lg font-semibold mb-2">{row.category}</Text>
+            ) : (
+                <ScrollView className="flex-1 mt-44" contentContainerStyle={{ flexGrow: 1 }}>
+                    <View className="flex-1">
+                        <View className="flex-1 px-4">
+                            <Text className="text-2xl font-bold text-center mb-4 text-primary">Seleccionar Cliente</Text>
                             
-                            <View className="space-y-2">
-                                <View>
-                                    <Text className="text-gray-600 mb-1">SC</Text>
-                                    <TextInput
-                                        className={`border rounded p-2 ${errors.sc?.[index] ? 'border-red-500' : 'border-gray-300'}`}
-                                        value={row.values.SC}
-                                        onChangeText={(text) => handleInputChange(row.category, "SC", text)}
-                                        placeholder="Ingrese SC"
-                                        keyboardType="numeric"
-                                        maxLength={5}
-                                    />
-                                    {errors.sc?.[index] ? <Text className="text-red-500 text-sm mt-1">{errors.sc[index]}</Text> : null}
-                                </View>
+                            <ClientSearchBar 
+                                onSelectClient={setSelectedClient}
+                                selectedClient={selectedClient}
+                            />
 
-                                <View>
-                                    <Text className="text-gray-600 mb-1">CC</Text>
-                                    <TextInput
-                                        className={`border rounded p-2 ${errors.cc?.[index] ? 'border-red-500' : 'border-gray-300'}`}
-                                        value={row.values.CC}
-                                        onChangeText={(text) => handleInputChange(row.category, "CC", text)}
-                                        placeholder="Ingrese CC"
-                                        keyboardType="numeric"
-                                        maxLength={5}
-                                    />
-                                    {errors.cc?.[index] ? <Text className="text-red-500 text-sm mt-1">{errors.cc[index]}</Text> : null}
-                                </View>
+                            <Text className="text-2xl font-bold text-center my-4 text-primary">Historia Clínica</Text>
+                            <View className="space-y-6">
+                                {rows.map((row, index) => (
+                                    <View key={index} className="mb-6">
+                                        <Text className="text-xl font-bold mb-4 text-primary">{row.category}</Text>
+                                        <View className="space-y-4">
+                                            <View>
+                                                <Text className="text-gray-600 mb-1">SC (Sin Corrección)</Text>
+                                                <TextInput
+                                                    className={`border rounded-lg p-3 bg-white ${errors.sc?.[index] ? 'border-red-500' : 'border-gray-300'}`}
+                                                    value={row.values.SC}
+                                                    onChangeText={(text) => handleInputChange(row.category, "SC", text)}
+                                                    keyboardType="numeric"
+                                                    placeholder="Ej: 20/20"
+                                                />
+                                                {errors.sc?.[index] && (
+                                                    <Text className="text-red-500 text-sm mt-1">{errors.sc[index]}</Text>
+                                                )}
+                                            </View>
 
-                                <View>
-                                    <Text className="text-gray-600 mb-1">AE</Text>
-                                    <TextInput
-                                        className={`border rounded p-2 ${errors.ae?.[index] ? 'border-red-500' : 'border-gray-300'}`}
-                                        value={row.values.AE}
-                                        onChangeText={(text) => handleInputChange(row.category, "AE", text)}
-                                        placeholder="Ingrese AE"
-                                        keyboardType="numeric"
-                                        maxLength={5}
-                                    />
-                                    {errors.ae?.[index] ? <Text className="text-red-500 text-sm mt-1">{errors.ae[index]}</Text> : null}
+                                            <View>
+                                                <Text className="text-gray-600 mb-1">CC (Con Corrección)</Text>
+                                                <TextInput
+                                                    className={`border rounded-lg p-3 bg-white ${errors.cc?.[index] ? 'border-red-500' : 'border-gray-300'}`}
+                                                    value={row.values.CC}
+                                                    onChangeText={(text) => handleInputChange(row.category, "CC", text)}
+                                                    keyboardType="numeric"
+                                                    placeholder="Ej: 20/20"
+                                                />
+                                                {errors.cc?.[index] && (
+                                                    <Text className="text-red-500 text-sm mt-1">{errors.cc[index]}</Text>
+                                                )}
+                                            </View>
+
+                                            <View>
+                                                <Text className="text-gray-600 mb-1">AE (Añadido Esférico)</Text>
+                                                <TextInput
+                                                    className={`border rounded-lg p-3 bg-white ${errors.ae?.[index] ? 'border-red-500' : 'border-gray-300'}`}
+                                                    value={row.values.AE}
+                                                    onChangeText={(text) => handleInputChange(row.category, "AE", text)}
+                                                    keyboardType="numeric"
+                                                    placeholder="Ej: +2.00"
+                                                />
+                                                {errors.ae?.[index] && (
+                                                    <Text className="text-red-500 text-sm mt-1">{errors.ae[index]}</Text>
+                                                )}
+                                            </View>
+                                        </View>
+                                    </View>
+                                ))}
+
+                                <View className="flex-row justify-between mb-8 mt-4">
+                                    <TouchableOpacity
+                                        className={`${cancelbutton} flex-1 mr-2`}
+                                        onPress={() => router.back()}
+                                    >
+                                        <Text className="text-white font-bold text-center">Cancelar</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        className={`${acceptbutton} flex-1 ml-2`}
+                                        onPress={onSubmit}
+                                    >
+                                        <Text className="text-white font-bold text-center">Guardar</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
-                    ))}
-
-                    <View className="flex-row space-x-4 mb-8">
-                        <TouchableOpacity
-                            onPress={() => router.replace("/home")}
-                            className={cancelbutton}
-                        >
-                            <Text className="text-white font-bold text-center">Cancelar</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            onPress={onSubmit}
-                            className={acceptbutton}
-                        >
-                            <Text className="text-white font-bold text-center">Guardar</Text>
-                        </TouchableOpacity>
                     </View>
                 </ScrollView>
-            </View>
+            )}
         </KeyboardAvoidingView>
     );
 };
