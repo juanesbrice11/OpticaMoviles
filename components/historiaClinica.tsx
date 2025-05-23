@@ -6,6 +6,14 @@ import { createClinicalHistory } from "@/services/clinicalHistory";
 import { useRouter } from "expo-router";
 import { cancelbutton, acceptbutton } from "./tokens";
 
+interface FormErrors {
+    clientId?: string;
+    av?: string[];
+    sc?: string[];
+    cc?: string[];
+    ae?: string[];
+}
+
 const initialRows = [
     { category: "Visión Lejana", values: { SC: "", CC: "", AE: "" } },
     { category: "Visión Cercana", values: { SC: "", CC: "", AE: "" } }
@@ -18,6 +26,7 @@ const HistoriaClinica = () => {
     const [clients, setClients] = useState<ClientBd[]>([]);
     const [rows, setRows] = useState(initialRows);
     const [isLoading, setIsLoading] = useState(true);
+    const [errors, setErrors] = useState<FormErrors>({});
 
     useEffect(() => {
         const fetchClients = async () => {
@@ -34,13 +43,51 @@ const HistoriaClinica = () => {
         fetchClients();
     }, []);
 
+    const validateClientId = (text: string) => {
+        if (!text.trim()) {
+            return 'El ID del cliente es requerido';
+        }
+        if (!/^[A-Za-z0-9]+$/.test(text)) {
+            return 'El ID del cliente solo puede contener letras y números';
+        }
+        if (text.length > 20) {
+            return 'El ID del cliente no puede tener más de 20 caracteres';
+        }
+        return '';
+    };
+
+    const validateVisionValue = (value: string) => {
+        if (!value.trim()) {
+            return 'Este campo es requerido';
+        }
+        if (!/^[0-9.]+$/.test(value)) {
+            return 'Solo se permiten números y punto decimal';
+        }
+        const num = parseFloat(value);
+        if (isNaN(num)) {
+            return 'Debe ser un número válido';
+        }
+        if (num < 0 || num > 20) {
+            return 'El valor debe estar entre 0 y 20';
+        }
+        return '';
+    };
+
     const handleSearch = () => {
+        const error = validateClientId(clientId);
+        if (error) {
+            setErrors(prev => ({ ...prev, clientId: error }));
+            return;
+        }
+
         const foundClient = clients.find(client => client.id === clientId);
         if (foundClient) {
             setSelectedClient(foundClient);
+            setErrors(prev => ({ ...prev, clientId: '' }));
         } else {
             Alert.alert("Cliente no encontrado", "Verifique el ID ingresado");
             setSelectedClient(null);
+            setErrors(prev => ({ ...prev, clientId: 'Cliente no encontrado' }));
         }
     };
 
@@ -50,29 +97,77 @@ const HistoriaClinica = () => {
                 row.category === category ? { ...row, values: { ...row.values, [field]: value } } : row
             )
         );
+
+        // Validar el valor ingresado
+        const error = validateVisionValue(value);
+        setErrors(prev => ({
+            ...prev,
+            [field.toLowerCase()]: prevRows.map(row => 
+                row.category === category ? error : ''
+            )
+        }));
+    };
+
+    const validateForm = () => {
+        const newErrors: FormErrors = {};
+        let hasErrors = false;
+
+        // Validar ID del cliente
+        if (!selectedClient) {
+            newErrors.clientId = 'Debe seleccionar un cliente';
+            hasErrors = true;
+        }
+
+        // Validar valores de visión
+        const visionErrors = {
+            sc: [] as string[],
+            cc: [] as string[],
+            ae: [] as string[]
+        };
+
+        rows.forEach(row => {
+            const scError = validateVisionValue(row.values.SC);
+            const ccError = validateVisionValue(row.values.CC);
+            const aeError = validateVisionValue(row.values.AE);
+
+            visionErrors.sc.push(scError);
+            visionErrors.cc.push(ccError);
+            visionErrors.ae.push(aeError);
+
+            if (scError || ccError || aeError) {
+                hasErrors = true;
+            }
+        });
+
+        newErrors.sc = visionErrors.sc;
+        newErrors.cc = visionErrors.cc;
+        newErrors.ae = visionErrors.ae;
+
+        setErrors(newErrors);
+        return !hasErrors;
     };
 
     const onSubmit = async () => {
-        if (!selectedClient) {
-            Alert.alert("Error", "Seleccione un cliente antes de guardar");
+        if (!validateForm()) {
+            Alert.alert('Error', 'Por favor corrija los errores en el formulario');
             return;
         }
 
-        const historyData = {
-            id_client: selectedClient.id,
-            av: [],
-            sc: rows.map(row => row.values.SC),
-            cc: rows.map(row => row.values.CC),
-            ae: rows.map(row => row.values.AE),
-        };
-
         try {
+            const historyData = {
+                id_client: selectedClient!.id,
+                av: rows.map(row => row.values.SC),
+                sc: rows.map(row => row.values.CC),
+                cc: rows.map(row => row.values.AE),
+                ae: rows.map(row => row.values.AE),
+            };
+
             await createClinicalHistory(historyData);
             Alert.alert("Éxito", "Historia clínica guardada exitosamente");
             router.replace("/home");
         } catch (error) {
             console.error("Error al enviar los datos:", error);
-            Alert.alert("Error", "No se pudo conectar con el servidor");
+            Alert.alert("Error", "No se pudo guardar la historia clínica. Por favor intente nuevamente.");
         }
     };
 
@@ -94,11 +189,16 @@ const HistoriaClinica = () => {
                 <Text className="text-2xl font-bold text-center mb-4 text-primary">Buscar Cliente</Text>
                 <View className="mx-6">
                     <TextInput
-                        className="border border-gray-300 rounded p-2 bg-white"
+                        className={`border rounded p-2 bg-white ${errors.clientId ? 'border-red-500' : 'border-gray-300'}`}
                         placeholder="Ingrese el ID del cliente"
                         value={clientId}
-                        onChangeText={(text) => setClientId(text)}
+                        onChangeText={(text) => {
+                            setClientId(text);
+                            setErrors(prev => ({ ...prev, clientId: validateClientId(text) }));
+                        }}
+                        maxLength={20}
                     />
+                    {errors.clientId ? <Text className="text-red-500 text-sm mt-1">{errors.clientId}</Text> : null}
                     <TouchableOpacity className="bg-primary py-2 rounded-lg mt-2 items-center mx-10" onPress={handleSearch}>
                         <Text className="text-white font-bold">Buscar</Text>
                     </TouchableOpacity>
@@ -111,49 +211,70 @@ const HistoriaClinica = () => {
                 )}
 
                 <Text className="text-2xl font-bold text-center my-4 text-primary">Historia Clínica</Text>
-                <ScrollView className="mx-6">
+
+                <ScrollView className="px-4">
                     {rows.map((row, index) => (
-                        <View key={index} className="mb-4 p-3 bg-white rounded-lg">
-                            <Text className="font-bold mb-2 text-gray-700 text-center">{row.category}</Text>
-                            <View className="flex-row items-center gap-2">
-                                <Text className="font-bold text-gray-700">SC:</Text>
-                                <TextInput
-                                    className="border border-gray-300 rounded p-2 bg-gray-50 flex-1"
-                                    placeholder="SC"
-                                    value={row.values.SC}
-                                    onChangeText={(text) => handleInputChange(row.category, "SC", text)}
-                                />
-                            </View>
-                            <View className="flex-row items-center gap-2 mt-2">
-                                <Text className="font-bold text-gray-700">CC:</Text>
-                                <TextInput
-                                    className="border border-gray-300 rounded p-2 bg-gray-50 flex-1"
-                                    placeholder="CC"
-                                    value={row.values.CC}
-                                    onChangeText={(text) => handleInputChange(row.category, "CC", text)}
-                                />
-                            </View>
-                            <View className="flex-row items-center gap-2 mt-2">
-                                <Text className="font-bold text-gray-700">AE:</Text>
-                                <TextInput
-                                    className="border border-gray-300 rounded p-2 bg-gray-50 flex-1"
-                                    placeholder="AE"
-                                    value={row.values.AE}
-                                    onChangeText={(text) => handleInputChange(row.category, "AE", text)}
-                                />
+                        <View key={row.category} className="mb-6">
+                            <Text className="text-lg font-semibold mb-2">{row.category}</Text>
+                            
+                            <View className="space-y-2">
+                                <View>
+                                    <Text className="text-gray-600 mb-1">SC</Text>
+                                    <TextInput
+                                        className={`border rounded p-2 ${errors.sc?.[index] ? 'border-red-500' : 'border-gray-300'}`}
+                                        value={row.values.SC}
+                                        onChangeText={(text) => handleInputChange(row.category, "SC", text)}
+                                        placeholder="Ingrese SC"
+                                        keyboardType="numeric"
+                                        maxLength={5}
+                                    />
+                                    {errors.sc?.[index] ? <Text className="text-red-500 text-sm mt-1">{errors.sc[index]}</Text> : null}
+                                </View>
+
+                                <View>
+                                    <Text className="text-gray-600 mb-1">CC</Text>
+                                    <TextInput
+                                        className={`border rounded p-2 ${errors.cc?.[index] ? 'border-red-500' : 'border-gray-300'}`}
+                                        value={row.values.CC}
+                                        onChangeText={(text) => handleInputChange(row.category, "CC", text)}
+                                        placeholder="Ingrese CC"
+                                        keyboardType="numeric"
+                                        maxLength={5}
+                                    />
+                                    {errors.cc?.[index] ? <Text className="text-red-500 text-sm mt-1">{errors.cc[index]}</Text> : null}
+                                </View>
+
+                                <View>
+                                    <Text className="text-gray-600 mb-1">AE</Text>
+                                    <TextInput
+                                        className={`border rounded p-2 ${errors.ae?.[index] ? 'border-red-500' : 'border-gray-300'}`}
+                                        value={row.values.AE}
+                                        onChangeText={(text) => handleInputChange(row.category, "AE", text)}
+                                        placeholder="Ingrese AE"
+                                        keyboardType="numeric"
+                                        maxLength={5}
+                                    />
+                                    {errors.ae?.[index] ? <Text className="text-red-500 text-sm mt-1">{errors.ae[index]}</Text> : null}
+                                </View>
                             </View>
                         </View>
                     ))}
 
-                    <View className="items-center my-6 flex-row justify-center gap-4 ">
-                        <TouchableOpacity className="bg-gray-300 px-4 py-2 rounded" onPress={() => router.replace("/home")}>
-                            <Text className=" font-bold text-lg">Cancelar</Text>
+                    <View className="flex-row space-x-4 mb-8">
+                        <TouchableOpacity
+                            onPress={() => router.replace("/home")}
+                            className={cancelbutton}
+                        >
+                            <Text className="text-white font-bold text-center">Cancelar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity className="bg-primary px-4 py-2 rounded" onPress={onSubmit}>
-                            <Text className="text-white font-bold text-lg">Guardar</Text>
+
+                        <TouchableOpacity
+                            onPress={onSubmit}
+                            className={acceptbutton}
+                        >
+                            <Text className="text-white font-bold text-center">Guardar</Text>
                         </TouchableOpacity>
                     </View>
-
                 </ScrollView>
             </View>
         </KeyboardAvoidingView>

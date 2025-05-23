@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, Platform, KeyboardAvoidingView, ScrollView, Alert } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { createGlasses } from '@/services/glassesService';
@@ -29,39 +29,78 @@ export default function CreateGlassesScreen() {
     const [error, setError] = useState<string | null>(null);
 
     const validateMarca = (text: string) => {
-        try {
-            createGlassesSchema.shape.marca.parse(text);
-            return '';
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return error.errors[0].message;
-            }
-            return 'Error de validación';
+        if (!text.trim()) {
+            return 'La marca es requerida';
         }
+        if (!/^[A-Za-z0-9\s\-]+$/.test(text)) {
+            return 'La marca solo puede contener letras, números, espacios y guiones';
+        }
+        if (text.length > 50) {
+            return 'La marca no puede tener más de 50 caracteres';
+        }
+        return '';
     };
 
-    const validateField = (name: keyof CreateGlassesSchema, value: string) => {
-        try {
-            createGlassesSchema.shape[name].parse(value);
-            return '';
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return error.errors[0].message;
-            }
-            return 'Error de validación';
+    const validateMaterial = (text: string) => {
+        if (!text.trim()) {
+            return 'El material es requerido';
         }
+        if (!/^[A-Za-z0-9\s\-]+$/.test(text)) {
+            return 'El material solo puede contener letras, números, espacios y guiones';
+        }
+        if (text.length > 50) {
+            return 'El material no puede tener más de 50 caracteres';
+        }
+        return '';
+    };
+
+    const validatePrecio = (text: string) => {
+        if (!text.trim()) {
+            return 'El precio es requerido';
+        }
+        const precio = parseFloat(text);
+        if (isNaN(precio)) {
+            return 'El precio debe ser un número válido';
+        }
+        if (precio < 0) {
+            return 'El precio no puede ser negativo';
+        }
+        return '';
+    };
+
+    const validateStock = (text: string) => {
+        if (!text.trim()) {
+            return 'El stock es requerido';
+        }
+        const stock = parseInt(text);
+        if (isNaN(stock)) {
+            return 'El stock debe ser un número entero válido';
+        }
+        if (stock < 0) {
+            return 'El stock no puede ser negativo';
+        }
+        return '';
     };
 
     const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        
         let errorMessage = '';
-        if (field === 'marca') {
-            errorMessage = validateMarca(value);
-        } else {
-            errorMessage = validateField(field as keyof CreateGlassesSchema, value);
+
+        switch (field) {
+            case 'marca':
+                errorMessage = validateMarca(value);
+                break;
+            case 'material':
+                errorMessage = validateMaterial(value);
+                break;
+            case 'precio':
+                errorMessage = validatePrecio(value);
+                break;
+            case 'stock':
+                errorMessage = validateStock(value);
+                break;
         }
-        
+
         setErrors(prev => ({
             ...prev,
             [field]: errorMessage
@@ -72,7 +111,7 @@ export default function CreateGlassesScreen() {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         
         if (status !== 'granted') {
-            alert('Lo sentimos, necesitamos permisos para acceder a la galería');
+            Alert.alert('Error', 'Necesitamos permisos para acceder a la galería');
             return;
         }
 
@@ -93,9 +132,10 @@ export default function CreateGlassesScreen() {
         const newErrors: FormErrors = {};
         
         newErrors.marca = validateMarca(formData.marca);
-        newErrors.material = validateField('material', formData.material);
-        newErrors.precio = validateField('precio', formData.precio);
-        newErrors.stock = validateField('stock', formData.stock);
+        newErrors.material = validateMaterial(formData.material);
+        newErrors.precio = validatePrecio(formData.precio);
+        newErrors.stock = validateStock(formData.stock);
+        
         if (!formData.imagen) {
             newErrors.imagen = 'La imagen es requerida';
         }
@@ -106,6 +146,7 @@ export default function CreateGlassesScreen() {
 
     const handleSubmit = async () => {
         if (!validateForm()) {
+            Alert.alert('Error', 'Por favor corrija los errores en el formulario');
             return;
         }
 
@@ -129,10 +170,12 @@ export default function CreateGlassesScreen() {
             } as any);
 
             await createGlasses(data);
+            Alert.alert('Éxito', 'Gafa creada correctamente');
             router.push('/home');
         } catch (err) {
             console.error('Error completo:', JSON.stringify(err));
             setError('Error al crear la gafa');
+            Alert.alert('Error', 'No se pudo crear la gafa. Por favor intente nuevamente.');
         } finally {
             setLoading(false);
         }
@@ -194,7 +237,7 @@ export default function CreateGlassesScreen() {
                                 onChangeText={(text) => handleInputChange('precio', text)}
                                 placeholder="Ingrese el precio"
                                 keyboardType="numeric"
-                                maxLength={50}
+                                maxLength={10}
                             />
                             {errors.precio ? <Text className="text-red-500 text-sm">{errors.precio}</Text> : null}
                         </View>
@@ -219,16 +262,16 @@ export default function CreateGlassesScreen() {
                                 onChangeText={(text) => handleInputChange('stock', text)}
                                 placeholder="Ingrese el stock"
                                 keyboardType="numeric"
-                                maxLength={50}
+                                maxLength={10}
                             />
                             {errors.stock ? <Text className="text-red-500 text-sm">{errors.stock}</Text> : null}
                         </View>
 
                         {error && (
-                            <Text className="text-red-500">{error}</Text>
+                            <Text className="text-red-500 text-center">{error}</Text>
                         )}
 
-                        <View className="flex-row w-11/12 mt-4 justify-end gap-2">
+                        <View className="flex-row space-x-4">
                             <TouchableOpacity
                                 onPress={() => router.push('/home')}
                                 className={cancelbutton}
