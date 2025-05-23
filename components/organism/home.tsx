@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Card from "@/components/organism/Card";
 import FloatingMenu from "@/components/molecules/FloatingMenu";
 import { texttitle } from "@/components/tokens";
+import { useRouter } from "expo-router";
 
 import { getGlasses, deleteGlasses } from "@/services/glassesService";
 
@@ -25,6 +26,7 @@ const Home = () => {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetchGlasses();
@@ -83,6 +85,11 @@ const Home = () => {
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleMenuAction = (url: string) => {
+    setMenuVisible(false);
+    router.push(url as any);
   };
 
   return (
@@ -149,6 +156,7 @@ const Home = () => {
         routes={[
           { url: "/crearGafa", text: "Crear Gafa" },
         ]}
+        onSelectRoute={handleMenuAction}
       />
       <View className="absolute bottom-0 right-0 mb-4 mr-4">
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
