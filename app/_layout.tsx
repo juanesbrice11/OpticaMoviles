@@ -4,7 +4,9 @@ import { AuthProvider } from "@/context/AuthContext";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useEffect, useState } from "react";
 import NetInfo from "@react-native-community/netinfo";
-import { Text, View } from "react-native";
+import { db } from "@/db";
+import { syncSales } from "@/services/localSalesService";
+import TestSQLite from "@/components/Test";
 
 export default function RootLayout() {
   const { expoPushToken, notification } = usePushNotifications(); 
@@ -20,6 +22,25 @@ export default function RootLayout() {
     };
   }, [expoPushToken, notification]);
 
+  useEffect(() => {
+    try {
+      // La base de datos se inicializará automáticamente gracias a las migraciones
+      console.log('Base de datos inicializada correctamente');
+    } catch (error) {
+      console.error('Error inicializando la base de datos:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (state.isConnected) {
+        syncSales().catch(console.error);
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
+
   return (
     <AuthProvider>
       <Stack
@@ -33,5 +54,6 @@ export default function RootLayout() {
         <Stack.Screen name="(content)" />
       </Stack>
     </AuthProvider>
+    // <TestSQLite />
   );
 }

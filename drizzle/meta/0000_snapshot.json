@@ -1,0 +1,66 @@
+{
+    "version": "5",
+    "dialect": "sqlite",
+    "id": "0000_initial_sales",
+    "prevId": null,
+    "tables": {
+        "sales": {
+            "name": "sales",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "integer",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "autoIncrement": true
+                },
+                "clientId": {
+                    "name": "clientId",
+                    "type": "text",
+                    "notNull": true
+                },
+                "glassesId": {
+                    "name": "glassesId",
+                    "type": "integer",
+                    "notNull": true
+                },
+                "total": {
+                    "name": "total",
+                    "type": "real",
+                    "notNull": true
+                },
+                "date": {
+                    "name": "date",
+                    "type": "text",
+                    "notNull": true
+                },
+                "status": {
+                    "name": "status",
+                    "type": "text",
+                    "notNull": true,
+                    "default": "'pending'"
+                }
+            },
+            "indexes": {
+                "sales_clientId_idx": {
+                    "name": "sales_clientId_idx",
+                    "columns": [
+                        "clientId"
+                    ]
+                },
+                "sales_glassesId_idx": {
+                    "name": "sales_glassesId_idx",
+                    "columns": [
+                        "glassesId"
+                    ]
+                },
+                "sales_date_idx": {
+                    "name": "sales_date_idx",
+                    "columns": [
+                        "date"
+                    ]
+                }
+            }
+        }
+    }
+}

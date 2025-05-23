@@ -77,6 +77,14 @@ const Profile = () => {
         >
           <Text className="text-white font-semibold p-2">Cerrar Sesión</Text>
         </Pressable>
+
+        <Button
+          title="Borrar token"
+          onPress={() => {
+            AsyncStorage.removeItem("@access_token");
+            AsyncStorage.removeItem("@refresh_token");
+          }}
+        />
       </View>
     </View>
   );
