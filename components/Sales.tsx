@@ -7,41 +7,45 @@ import { Ionicons } from "@expo/vector-icons";
 import FloatingMenu from "./molecules/FloatingMenu";
 import EditSaleModal from "../components/EditSaleModal";
 import { useLocalSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
+import ConfirmModal from "./molecules/ConfirmModal";
 
 export default function Sales() {
   const params = useLocalSearchParams();
+  const router = useRouter();
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [menuVisible, setMenuVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { authState } = useAuth();
+
+  const fetchSales = async () => {
+    try {
+      const data = await getSales();
+      if (params.salesIds) {
+        const salesIds = (params.salesIds as string).split(',').map(Number);
+        const filteredSales = data.filter(sale => salesIds.includes(sale.id));
+        setSales(filteredSales);
+        
+        Alert.alert(
+          "Ventas asociadas",
+          `Estas son las ventas asociadas al cliente ${params.clientId}.\n\nIDs de ventas: ${params.salesIds}`
+        );
+      } else {
+        setSales(data);
+      }
+      setLoading(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ocurrió un error');
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSales = async () => {
-      try {
-        const data = await getSales();
-        // Si hay salesIds en los parámetros, filtrar las ventas
-        if (params.salesIds) {
-          const salesIds = (params.salesIds as string).split(',').map(Number);
-          const filteredSales = data.filter(sale => salesIds.includes(sale.id));
-          setSales(filteredSales);
-          
-          // Mostrar mensaje informativo
-          Alert.alert(
-            "Ventas asociadas",
-            `Estas son las ventas asociadas al cliente ${params.clientId}.\n\nIDs de ventas: ${params.salesIds}`
-          );
-        } else {
-          setSales(data);
-        }
-        setLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Ocurrió un error');
-        setLoading(false);
-      }
-    };
-
     fetchSales();
   }, [params.salesIds, params.clientId]);
 
@@ -50,54 +54,32 @@ export default function Sales() {
     setEditModalVisible(true);
   };
 
-  const handleDelete = async (id: number) => {
-    Alert.alert(
-      'Confirmar eliminación',
-      '¿Estás seguro de que quieres eliminar esta venta?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel'
-        },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteSale(id);
-              // Actualizar la lista de ventas
-              const data = await getSales();
-              if (params.salesIds) {
-                const salesIds = (params.salesIds as string).split(',').map(Number);
-                const filteredSales = data.filter(sale => salesIds.includes(sale.id));
-                setSales(filteredSales);
-              } else {
-                setSales(data);
-              }
-            } catch (err) {
-              setError(err instanceof Error ? err.message : 'Error al eliminar la venta');
-            }
-          }
-        }
-      ]
-    );
-  };
-
-  const handleUpdate = async () => {
+  const handleDelete = async () => {
+    if (!selectedSale) return;
+    
     try {
-      const data = await getSales();
-      if (params.salesIds) {
-        const salesIds = (params.salesIds as string).split(',').map(Number);
-        const filteredSales = data.filter(sale => salesIds.includes(sale.id));
-        setSales(filteredSales);
-      } else {
-        setSales(data);
-      }
-      setEditModalVisible(false);
+      await deleteSale(selectedSale.id);
+      Alert.alert("Éxito", "Venta eliminada correctamente");
+      await fetchSales();
+      setShowDeleteModal(false);
+      setSelectedSale(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar la lista de ventas');
+      Alert.alert("Error", "No se pudo eliminar la venta");
     }
   };
+
+  const handleDeleteConfirm = (sale: Sale) => {
+    setSelectedSale(sale);
+    setShowDeleteModal(true);
+  };
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text className="text-center mt-4">Cargando...</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -114,10 +96,20 @@ export default function Sales() {
           {params.salesIds ? "Ventas asociadas al cliente" : "Ventas"}
         </Text>
         <ScrollView className="w-full">
-          {loading ? (
-            <Text className="text-center mt-4">Cargando...</Text>
-          ) : error ? (
+          {error ? (
             <Text className="text-center mt-4 text-red-500">Error: {error}</Text>
+          ) : sales.length === 0 ? (
+            <View className="items-center justify-center p-4">
+              <Ionicons name="cart-outline" size={64} color="#1769AA" />
+              <Text className="text-lg text-gray-600 text-center mt-4">
+                No hay ventas para mostrar
+              </Text>
+              {!params.salesIds && (
+                <Text className="text-sm text-gray-500 text-center mt-2">
+                  Presiona el botón + para crear una nueva venta
+                </Text>
+              )}
+            </View>
           ) : (
             <View className="items-center">
               {sales.map((sale) => (
@@ -130,7 +122,7 @@ export default function Sales() {
                   date={sale.date}
                   product_image={{ uri: sale.glasses.imagen }}
                   onEdit={() => handleEdit(sale)}
-                  onDelete={() => handleDelete(sale.id)}
+                  onDelete={() => handleDeleteConfirm(sale)}
                 />
               ))}
             </View>
@@ -165,9 +157,20 @@ export default function Sales() {
               total: selectedSale.total,
               date: selectedSale.date
             }}
-            onSuccess={handleUpdate}
+            onSuccess={fetchSales}
           />
         )}
+
+        <ConfirmModal
+          visible={showDeleteModal}
+          onConfirm={handleDelete}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setSelectedSale(null);
+          }}
+          title="Eliminar venta"
+          description="¿Estás seguro de que deseas eliminar esta venta?"
+        />
       </View>
     </KeyboardAvoidingView>
   );

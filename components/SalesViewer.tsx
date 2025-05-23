@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { Text, Image, View, Pressable } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAuth } from "@/context/AuthContext";
 
 interface SalesViewerProps {
     id: number;
@@ -23,6 +24,8 @@ export default function SalesViewerComponent({
     onEdit,
     onDelete,
 }: SalesViewerProps): JSX.Element {
+    const { authState } = useAuth();
+
     return (
         <View className="bg-white rounded-2xl shadow-lg shadow-black/30 w-11/12 mx-auto my-2 p-5 flex-row items-center gap-4 border border-gray-200">
             <Image
@@ -41,9 +44,11 @@ export default function SalesViewerComponent({
                     <Pressable onPress={onEdit}>
                         <Feather name="edit" color="#000" size={24} />
                     </Pressable>
-                    <Pressable onPress={onDelete}>
-                        <MaterialCommunityIcons name="delete" color="#000" size={24} />
-                    </Pressable>
+                    {authState?.role === "admin" && (
+                        <Pressable onPress={onDelete}>
+                            <MaterialCommunityIcons name="delete" color="#000" size={24} />
+                        </Pressable>
+                    )}
                 </View>
             </View>
         </View>

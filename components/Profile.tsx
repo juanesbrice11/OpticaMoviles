@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator, Button } from "react-native";
+import { View, Text, Image, ActivityIndicator, Button, Pressable } from "react-native";
 import { useAuth } from "@/context/AuthContext";
 import { getUserById } from "@/services/usersService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { Ionicons } from "@expo/vector-icons";
-
 
 interface ProfileData {
   id: string;
@@ -72,12 +71,14 @@ const Profile = () => {
       </View>
 
       <View className="items-center mt-4">
-        <Button title="Logout" onPress={onLogout} />
+        <Pressable 
+          onPress={onLogout}
+          className="bg-primary px-6 rounded-lg"
+        >
+          <Text className="text-white font-semibold p-2">Cerrar Sesión</Text>
+        </Pressable>
       </View>
-      
     </View>
-
-    
   );
 };
 
