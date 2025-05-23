@@ -16,7 +16,9 @@ export const login = async (credentials: LoginSchema): Promise<LoginResponse> =>
         });
 
         if (!response.ok) {
-            throw new Error('Error en la autenticación');
+            const errorData = await response.text();
+            console.error('Server response:', errorData);
+            throw new Error(`Error en la autenticación: ${errorData}`);
         }
 
         const data = await response.json();
