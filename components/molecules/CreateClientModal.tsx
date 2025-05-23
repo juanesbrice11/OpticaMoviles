@@ -181,8 +181,17 @@ export default function CreateClientModal({ visible, onClose, onSuccess }: Creat
             Alert.alert("Éxito", "Cliente creado correctamente");
             onSuccess();
             handleDismiss();
-        } catch (error) {
-            Alert.alert("Error", "No se pudo crear el cliente");
+        } catch (error: any) {
+            console.error('Error creating client:', error);
+            let errorMessage = "No se pudo crear el cliente";
+            
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            Alert.alert("Error", errorMessage);
         } finally {
             setIsLoading(false);
         }

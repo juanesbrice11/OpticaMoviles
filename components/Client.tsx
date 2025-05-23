@@ -147,6 +147,7 @@ export default function Client() {
             { url: "/crearCliente", text: "Crear cliente" },
           ]}
           onSelectRoute={handleMenuAction}
+          position="left"
         />
         <View className="absolute bottom-0 left-0 mb-4 ml-4">
           <TouchableOpacity onPress={() => setMenuVisible(true)}>
