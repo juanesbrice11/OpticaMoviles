@@ -5,9 +5,11 @@ import { texttitle } from "./tokens";
 import { getSales, Sale, deleteSale } from "@/services/salesService";
 import { Ionicons } from "@expo/vector-icons";
 import FloatingMenu from "./molecules/FloatingMenu";
-import EditSaleModal from "../components/EditSaleModal"
+import EditSaleModal from "../components/EditSaleModal";
+import { useLocalSearchParams } from "expo-router";
 
 export default function Sales() {
+  const params = useLocalSearchParams();
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +21,20 @@ export default function Sales() {
     const fetchSales = async () => {
       try {
         const data = await getSales();
-        setSales(data);
+        // Si hay salesIds en los parámetros, filtrar las ventas
+        if (params.salesIds) {
+          const salesIds = (params.salesIds as string).split(',').map(Number);
+          const filteredSales = data.filter(sale => salesIds.includes(sale.id));
+          setSales(filteredSales);
+          
+          // Mostrar mensaje informativo
+          Alert.alert(
+            "Ventas asociadas",
+            `Estas son las ventas asociadas al cliente ${params.clientId}.\n\nIDs de ventas: ${params.salesIds}`
+          );
+        } else {
+          setSales(data);
+        }
         setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Ocurrió un error');
@@ -28,7 +43,7 @@ export default function Sales() {
     };
 
     fetchSales();
-  }, []);
+  }, [params.salesIds, params.clientId]);
 
   const handleEdit = (sale: Sale) => {
     setSelectedSale(sale);
@@ -52,7 +67,13 @@ export default function Sales() {
               await deleteSale(id);
               // Actualizar la lista de ventas
               const data = await getSales();
-              setSales(data);
+              if (params.salesIds) {
+                const salesIds = (params.salesIds as string).split(',').map(Number);
+                const filteredSales = data.filter(sale => salesIds.includes(sale.id));
+                setSales(filteredSales);
+              } else {
+                setSales(data);
+              }
             } catch (err) {
               setError(err instanceof Error ? err.message : 'Error al eliminar la venta');
             }
@@ -65,7 +86,13 @@ export default function Sales() {
   const handleUpdate = async () => {
     try {
       const data = await getSales();
-      setSales(data);
+      if (params.salesIds) {
+        const salesIds = (params.salesIds as string).split(',').map(Number);
+        const filteredSales = data.filter(sale => salesIds.includes(sale.id));
+        setSales(filteredSales);
+      } else {
+        setSales(data);
+      }
       setEditModalVisible(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al actualizar la lista de ventas');
@@ -83,7 +110,9 @@ export default function Sales() {
           className="w-full h-44"
         />
 
-        <Text className={`${texttitle}`}>Ventas</Text>
+        <Text className={`${texttitle}`}>
+          {params.salesIds ? "Ventas asociadas al cliente" : "Ventas"}
+        </Text>
         <ScrollView className="w-full">
           {loading ? (
             <Text className="text-center mt-4">Cargando...</Text>
@@ -108,18 +137,22 @@ export default function Sales() {
           )}
         </ScrollView>
 
-        <FloatingMenu
-          visible={menuVisible}
-          onClose={() => setMenuVisible(false)}
-          routes={[
-            { url: "/(content)/(sales)/crearVenta", text: "Crear Venta" },
-          ]}
-        />
-        <View className="absolute bottom-0 right-0 mb-4 mr-4">
-          <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
-            <Ionicons name="add-circle" size={60} color="#1769AA" />
-          </TouchableOpacity>
-        </View>
+        {!params.salesIds && (
+          <>
+            <FloatingMenu
+              visible={menuVisible}
+              onClose={() => setMenuVisible(false)}
+              routes={[
+                { url: "/(content)/(sales)/crearVenta", text: "Crear Venta" },
+              ]}
+            />
+            <View className="absolute bottom-0 right-0 mb-4 mr-4">
+              <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+                <Ionicons name="add-circle" size={60} color="#1769AA" />
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
 
         {selectedSale && (
           <EditSaleModal
