@@ -73,6 +73,7 @@ export default function Card({ name, imageUri, price, material, id, stock, isSel
         onLoad={() => console.log('Image loaded successfully:', normalizedImageUri)}
       />
       <View className="p-3">
+        <Text className="text-sm text-gray-500 mb-1">Ref. {id}</Text>
         <Text className="font-bold text-base text-gray-800 mb-1">{name}</Text>
         <Text className="text-lg font-bold text-primary mb-1">${price}</Text>
         <Text className="text-sm text-gray-600 mb-1">{material}</Text>
