@@ -17,12 +17,11 @@ interface FloatingMenuProps {
 export default function FloatingMenu({ visible, onClose, routes, onSelectRoute }: FloatingMenuProps) {
   if (!visible) return null;
 
-  const handleRoutePress = (url: string) => {
+  const handleRoutePress = (route: RoutesData) => {
     if (onSelectRoute) {
-      onSelectRoute(url);
+      onSelectRoute(route.url);
     } else {
-      // Asegurarse de que la URL comience con /
-      const formattedUrl = url.startsWith('/') ? url : `/${url}`;
+      const formattedUrl = route.url.startsWith('/') ? route.url : `/${route.url}`;
       router.push(formattedUrl as any);
     }
     onClose();
@@ -34,7 +33,7 @@ export default function FloatingMenu({ visible, onClose, routes, onSelectRoute }
         <TouchableOpacity
           key={route.url}
           className="p-2 border-b border-gray-300"
-          onPress={() => handleRoutePress(route.url)}
+          onPress={() => handleRoutePress(route)}
         >
           <Text className="text-gray-700 text-xl">{route.text}</Text>
         </TouchableOpacity>

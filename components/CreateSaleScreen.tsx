@@ -163,7 +163,7 @@ export default function CreateSaleScreen() {
                         />
                     </View>
 
-                    <Text className={`${texttitile} text-center mb-4 text-2xl font-bold text-blue-600`}>
+                    <Text className={`${texttitle} text-center mb-4 text-2xl font-bold text-blue-600`}>
                         Crear nueva venta
                     </Text>
 

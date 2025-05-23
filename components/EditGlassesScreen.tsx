@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Platform, KeyboardAvoidingView, ScrollView, Modal, FlatList, TouchableWithoutFeedback } from 'react-native';
-import { router } from 'expo-router';
-import { createGlasses } from '@/services/glassesService';
+import { router, useLocalSearchParams } from 'expo-router';
+import { updateGlasses } from '@/services/glassesService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { acceptbutton, cancelbutton, texttitle } from './tokens';
 import { createGlassesSchema, CreateGlassesSchema } from '@/types/schemas';
@@ -15,16 +15,31 @@ interface FormErrors {
 }
 
 const MARCAS = [
-    'RayBan', 'Oakley', 'Gucci', 'Tommy Hilfiger', 'Prada',
-    'Michael Kors', 'Carrera', 'Persol', 'Maui Jim', 'Warby Parker'
+    'RayBan',
+    'Oakley',
+    'Gucci',
+    'Tommy Hilfiger',
+    'Prada',
+    'Michael Kors',
+    'Carrera',
+    'Persol',
+    'Maui Jim',
+    'Warby Parker'
 ];
 
 const MATERIALES = [
-    'Acetato', 'Metal', 'Titanio', 'Plástico', 'Madera',
-    'Fibra de carbono', 'Aluminio', 'Acero inoxidable'
+    'Acetato',
+    'Metal',
+    'Titanio',
+    'Plástico',
+    'Madera',
+    'Fibra de carbono',
+    'Aluminio',
+    'Acero inoxidable'
 ];
 
-export default function CreateGlassesScreen() {
+export default function EditGlassesScreen() {
+    const params = useLocalSearchParams();
     const [formData, setFormData] = useState({
         marca: '',
         precio: '',
@@ -36,6 +51,29 @@ export default function CreateGlassesScreen() {
     const [error, setError] = useState<string | null>(null);
     const [marcaModalVisible, setMarcaModalVisible] = useState(false);
     const [materialModalVisible, setMaterialModalVisible] = useState(false);
+
+    useEffect(() => {
+        // Aquí deberías cargar los datos de la gafa usando el ID de los params
+        // Por ahora usamos datos de ejemplo
+        setFormData({
+            marca: 'RayBan',
+            precio: '100',
+            material: 'Metal',
+            stock: '10'
+        });
+    }, []);
+
+    const validateMarca = (text: string) => {
+        try {
+            createGlassesSchema.shape.marca.parse(text);
+            return '';
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                return error.errors[0].message;
+            }
+            return 'Error de validación';
+        }
+    };
 
     const validateField = (name: keyof CreateGlassesSchema, value: string) => {
         try {
@@ -51,24 +89,36 @@ export default function CreateGlassesScreen() {
 
     const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        const errorMessage = validateField(field as keyof CreateGlassesSchema, value);
-        setErrors(prev => ({ ...prev, [field]: errorMessage }));
+        
+        let errorMessage = '';
+        if (field === 'marca') {
+            errorMessage = validateMarca(value);
+        } else {
+            errorMessage = validateField(field as keyof CreateGlassesSchema, value);
+        }
+        
+        setErrors(prev => ({
+            ...prev,
+            [field]: errorMessage
+        }));
     };
 
     const validateForm = () => {
-        const newErrors: FormErrors = {
-            marca: validateField('marca', formData.marca),
-            precio: validateField('precio', formData.precio),
-            material: validateField('material', formData.material),
-            stock: validateField('stock', formData.stock),
-        };
+        const newErrors: FormErrors = {};
+        
+        newErrors.marca = validateMarca(formData.marca);
+        newErrors.material = validateField('material', formData.material);
+        newErrors.precio = validateField('precio', formData.precio);
+        newErrors.stock = validateField('stock', formData.stock);
 
         setErrors(newErrors);
         return !Object.values(newErrors).some(error => error !== '');
     };
 
     const handleSubmit = async () => {
-        if (!validateForm()) return;
+        if (!validateForm()) {
+            return;
+        }
 
         try {
             setLoading(true);
@@ -80,11 +130,11 @@ export default function CreateGlassesScreen() {
             data.append('material', formData.material.trim());
             data.append('stock', formData.stock);
 
-            await createGlasses(data);
+            await updateGlasses(Number(params.id), data);
             router.replace('/home');
         } catch (err) {
             console.error('Error completo:', JSON.stringify(err));
-            setError('Error al crear la gafa');
+            setError('Error al actualizar la gafa');
         } finally {
             setLoading(false);
         }
@@ -104,11 +154,10 @@ export default function CreateGlassesScreen() {
             >
                 <ScrollView keyboardShouldPersistTaps="handled" className="px-6">
                     <Text className={`${texttitle} mb-6`}>
-                        Crear gafa
+                        Editar gafa
                     </Text>
 
                     <View className="space-y-6">
-                        {/* Marca */}
                         <View>
                             <Text className="text-gray-600 mb-2 text-base font-medium">Marca</Text>
                             <TouchableOpacity
@@ -122,8 +171,11 @@ export default function CreateGlassesScreen() {
                             {errors.marca ? <Text className="text-red-500 text-sm mt-1">{errors.marca}</Text> : null}
                         </View>
 
-                        {/* Modal Marca */}
-                        <Modal visible={marcaModalVisible} transparent animationType="fade">
+                        <Modal
+                            visible={marcaModalVisible}
+                            transparent
+                            animationType="fade"
+                        >
                             <TouchableWithoutFeedback onPress={() => setMarcaModalVisible(false)}>
                                 <View className="flex-1 bg-black/30 justify-center items-center">
                                     <View className="bg-white rounded-lg p-4 w-4/5 max-h-96">
@@ -148,13 +200,11 @@ export default function CreateGlassesScreen() {
                             </TouchableWithoutFeedback>
                         </Modal>
 
-                        {/* Imagen (ficticia) */}
                         <View className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                             <Text className="text-gray-600 mb-2 text-base font-medium">Imagen</Text>
                             <Text className="text-gray-500 italic">Selección de imagen disponible próximamente</Text>
                         </View>
 
-                        {/* Precio */}
                         <View>
                             <Text className="text-gray-600 mb-2 text-base font-medium">Precio</Text>
                             <TextInput
@@ -168,7 +218,6 @@ export default function CreateGlassesScreen() {
                             {errors.precio ? <Text className="text-red-500 text-sm mt-1">{errors.precio}</Text> : null}
                         </View>
 
-                        {/* Material */}
                         <View>
                             <Text className="text-gray-600 mb-2 text-base font-medium">Material</Text>
                             <TouchableOpacity
@@ -182,8 +231,11 @@ export default function CreateGlassesScreen() {
                             {errors.material ? <Text className="text-red-500 text-sm mt-1">{errors.material}</Text> : null}
                         </View>
 
-                        {/* Modal Material */}
-                        <Modal visible={materialModalVisible} transparent animationType="fade">
+                        <Modal
+                            visible={materialModalVisible}
+                            transparent
+                            animationType="fade"
+                        >
                             <TouchableWithoutFeedback onPress={() => setMaterialModalVisible(false)}>
                                 <View className="flex-1 bg-black/30 justify-center items-center">
                                     <View className="bg-white rounded-lg p-4 w-4/5 max-h-96">
@@ -208,7 +260,6 @@ export default function CreateGlassesScreen() {
                             </TouchableWithoutFeedback>
                         </Modal>
 
-                        {/* Stock */}
                         <View>
                             <Text className="text-gray-600 mb-2 text-base font-medium">Stock</Text>
                             <TextInput
@@ -222,12 +273,10 @@ export default function CreateGlassesScreen() {
                             {errors.stock ? <Text className="text-red-500 text-sm mt-1">{errors.stock}</Text> : null}
                         </View>
 
-                        {/* Error general */}
                         {error && (
                             <Text className="text-red-500 text-center">{error}</Text>
                         )}
 
-                        {/* Botones */}
                         <View className="flex-row justify-end gap-4 mt-8 mb-6">
                             <TouchableOpacity
                                 onPress={() => router.back()}
@@ -243,7 +292,7 @@ export default function CreateGlassesScreen() {
                                 className={`${acceptbutton} min-w-[120px] py-3.5 ${loading ? 'opacity-50' : ''}`}
                             >
                                 <Text className="text-white font-bold text-base text-center">
-                                    {loading ? 'Creando...' : 'Crear'}
+                                    {loading ? 'Actualizando...' : 'Actualizar'}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -252,4 +301,4 @@ export default function CreateGlassesScreen() {
             </KeyboardAvoidingView>
         </View>
     );
-}
+} 
