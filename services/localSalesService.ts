@@ -11,7 +11,7 @@ export interface LocalSale {
     total: number;
     date: string;
     status: string;
-    }
+}
 
 export const getLocalSales = async (): Promise<LocalSale[]> => {
     try {
@@ -97,16 +97,27 @@ export const dropSalesTable = async (): Promise<void> => {
 
 export const syncSales = async (): Promise<void> => {
     try {
-        // 1. Obtener todas las ventas locales que tengan status 'pending'
         const pendingSales = await db
             .select()
             .from(sales)
             .where(eq(sales.status, 'pending'));
 
-        // 2. Para cada venta pendiente, intentar sincronizar con el backend
+        // Añadir un control de ventas en proceso de sincronización
+        const syncingIds = new Set();
+
         for (const sale of pendingSales) {
+            // Evitar sincronizar la misma venta múltiples veces
+            if (syncingIds.has(sale.id)) continue;
+
             try {
-                // 3. Crear la venta en el backend con solo los campos necesarios
+                syncingIds.add(sale.id);
+
+                // Marcar como "syncing" antes de intentar sincronizar
+                await db
+                    .update(sales)
+                    .set({ status: 'syncing' })
+                    .where(eq(sales.id, sale.id));
+
                 await createSale({
                     clientId: sale.clientId,
                     glassesId: sale.glassesId,
@@ -114,19 +125,23 @@ export const syncSales = async (): Promise<void> => {
                     date: sale.date
                 });
 
-                // 4. Si la sincronización fue exitosa, actualizar el status a 'synced'
                 await db
                     .update(sales)
                     .set({ status: 'synced' })
                     .where(eq(sales.id, sale.id));
 
+                syncingIds.delete(sale.id);
             } catch (error) {
+                // Si falla, volver a "pending"
+                await db
+                    .update(sales)
+                    .set({ status: 'pending' })
+                    .where(eq(sales.id, sale.id));
+
+                syncingIds.delete(sale.id);
                 console.error(`Error sincronizando venta ${sale.id}:`, error);
-                // La venta seguirá con status 'pending' para intentar sincronizar después
             }
         }
-
-        console.log('Sincronización completada');
     } catch (error) {
         console.error('Error en el proceso de sincronización:', error);
         throw error;
