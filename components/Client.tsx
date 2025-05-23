@@ -9,25 +9,20 @@ import ClientListItem from "@/components/ClientListItem";
 import FloatingMenu from "@/components/molecules/FloatingMenu";
 import { getClients } from "@/services/clientsService";
 import { useAuth } from "@/context/AuthContext";
+import CreateClientModal from "./molecules/CreateClientModal";
 
 export default function Client() {
   const { onLogout } = useAuth();
   const [menuVisible, setMenuVisible] = useState(false);
   const [clients, setClients] = useState<ClientBd[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   const fetchClients = async () => {
     setIsLoading(true);
     try {
       const apiClients = await getClients();
-      const formattedClients: ClientBd[] = apiClients.map(client => ({
-        id: client.id,
-        name: client.name,
-        lastname: client.lastname,
-        phone: client.phone,
-        email: client.email,
-      }));
-      setClients(formattedClients);
+      setClients(apiClients);
     } catch (error) {
       Alert.alert("Error", "No se pudo cargar la lista de clientes");
     } finally {
@@ -51,6 +46,11 @@ export default function Client() {
     <ClientListItem client={item} refreshClients={fetchClients} />
   );
 
+  const handleCreateSuccess = () => {
+    setCreateModalVisible(false);
+    fetchClients();
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -69,18 +69,23 @@ export default function Client() {
         </Text>
 
         <ScrollView>
-          <GenericSearchBar<ClientBd>
+          <GenericSearchBar
             data={clients}
             placeholder="Buscar clientes..."
             filterPredicate={(client, query) =>
               client.name.toLowerCase().includes(query.toLowerCase()) ||
-              client.lastname.toLowerCase().includes(query.toLowerCase()) ||
-              client.email.toLowerCase().includes(query.toLowerCase()) ||
+              client.email?.toLowerCase().includes(query.toLowerCase()) ||
               client.id.includes(query)
             }
             renderItem={renderClient}
           />
         </ScrollView>
+
+        <CreateClientModal
+          visible={createModalVisible}
+          onClose={() => setCreateModalVisible(false)}
+          onSuccess={handleCreateSuccess}
+        />
 
         <FloatingMenu
           visible={menuVisible}
@@ -91,7 +96,7 @@ export default function Client() {
           ]}
         />
         <View className="absolute bottom-0 right-0 mb-4 mr-4">
-          <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+          <TouchableOpacity onPress={() => setCreateModalVisible(true)}>
             <Ionicons name="add-circle" size={60} color="#1769AA" />
           </TouchableOpacity>
         </View>
