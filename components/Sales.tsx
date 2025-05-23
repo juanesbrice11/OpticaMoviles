@@ -6,6 +6,7 @@ import { getSales, Sale, deleteSale } from "@/services/salesService";
 import { Ionicons } from "@expo/vector-icons";
 import FloatingMenu from "./molecules/FloatingMenu";
 import EditSaleModal from "../components/EditSaleModal";
+import CreateSaleModal from "./molecules/CreateSaleModal";
 import { useLocalSearchParams } from "expo-router";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
@@ -19,6 +20,7 @@ export default function Sales() {
   const [error, setError] = useState<string | null>(null);
   const [menuVisible, setMenuVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { authState } = useAuth();
@@ -131,18 +133,12 @@ export default function Sales() {
 
         {!params.salesIds && (
           <>
-            <FloatingMenu
-              visible={menuVisible}
-              onClose={() => setMenuVisible(false)}
-              routes={[
-                { url: "/(content)/(sales)/crearVenta", text: "Crear Venta" },
-              ]}
-            />
-            <View className="absolute bottom-0 right-0 mb-4 mr-4">
-              <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
-                <Ionicons name="add-circle" size={60} color="#1769AA" />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity 
+              className="absolute bottom-0 right-0 mb-4 mr-4"
+              onPress={() => setCreateModalVisible(true)}
+            >
+              <Ionicons name="add-circle" size={60} color="#1769AA" />
+            </TouchableOpacity>
           </>
         )}
 
@@ -160,6 +156,12 @@ export default function Sales() {
             onSuccess={fetchSales}
           />
         )}
+
+        <CreateSaleModal
+          visible={createModalVisible}
+          onClose={() => setCreateModalVisible(false)}
+          onSuccess={fetchSales}
+        />
 
         <ConfirmModal
           visible={showDeleteModal}

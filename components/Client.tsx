@@ -13,6 +13,7 @@ import CreateClientModal from "./molecules/CreateClientModal";
 
 export default function Client() {
   const { onLogout } = useAuth();
+  const router = useRouter();
   const [menuVisible, setMenuVisible] = useState(false);
   const [clients, setClients] = useState<ClientBd[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,6 +50,15 @@ export default function Client() {
   const handleCreateSuccess = () => {
     setCreateModalVisible(false);
     fetchClients();
+  };
+
+  const handleMenuAction = (url: string) => {
+    setMenuVisible(false);
+    if (url === "/crearCliente") {
+      setCreateModalVisible(true);
+    } else {
+      router.push(url as any);
+    }
   };
 
   return (
@@ -94,9 +104,10 @@ export default function Client() {
             { url: "/crearHistoria", text: "Crear historia" },
             { url: "/crearCliente", text: "Crear cliente" },
           ]}
+          onSelectRoute={handleMenuAction}
         />
         <View className="absolute bottom-0 right-0 mb-4 mr-4">
-          <TouchableOpacity onPress={() => setCreateModalVisible(true)}>
+          <TouchableOpacity onPress={() => setMenuVisible(true)}>
             <Ionicons name="add-circle" size={60} color="#1769AA" />
           </TouchableOpacity>
         </View>
