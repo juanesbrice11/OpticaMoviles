@@ -3,7 +3,14 @@ import { View, Text, TextInput, TouchableOpacity, Image, Alert, Keyboard, Toucha
 import { router } from 'expo-router';
 import { createSale } from '@/services/salesService';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { texttitile } from './tokens';
+import { texttitle } from './tokens';
+
+interface FormErrors {
+    clientId?: string;
+    glassesId?: string;
+    total?: string;
+    date?: string;
+}
 
 interface FormErrors {
     clientId?: string;
