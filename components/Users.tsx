@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, ScrollView, Button, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import UsersListItem from "@/components/UsersListItem";
 import GenericSearchBar from "@/components/SearchBar";
 import { getUsers } from "@/services/usersService";
 import { Ionicons } from "@expo/vector-icons";
-import FloatingMenu from "./molecules/FloatingMenu";
 import { User } from "@/types/api";
+import CreateUserModal from "./molecules/CreateUserModal";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [menuVisible, setMenuVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -40,6 +40,11 @@ export default function Users() {
     <UsersListItem user={item} refreshUsers={fetchUsers} />
   );
 
+  const handleCreateSuccess = () => {
+    setCreateModalVisible(false);
+    fetchUsers();
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -57,7 +62,6 @@ export default function Users() {
           Usuarios
         </Text>
         <ScrollView>
-
           <GenericSearchBar
             data={users}
             placeholder="Buscar usuarios..."
@@ -69,15 +73,15 @@ export default function Users() {
             renderItem={renderUser}
           />
         </ScrollView>
-        <FloatingMenu
-          visible={menuVisible}
-          onClose={() => setMenuVisible(false)}
-          routes={[
-            { url: "/crearUsuario", text: "Crear usuario" },
-          ]}
+
+        <CreateUserModal
+          visible={createModalVisible}
+          onClose={() => setCreateModalVisible(false)}
+          onSuccess={handleCreateSuccess}
         />
+
         <View className="absolute bottom-0 right-0 mb-4 mr-4">
-          <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+          <TouchableOpacity onPress={() => setCreateModalVisible(true)}>
             <Ionicons name="add-circle" size={60} color="#1769AA" />
           </TouchableOpacity>
         </View>

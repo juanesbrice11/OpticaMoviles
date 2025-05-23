@@ -72,7 +72,6 @@ export const AuthProvider = ({ children }: any) => {
         try {
             return await register(data);
         } catch (error) {
-            console.error("Error en el registro:", error);
             throw error;
         }
     };
@@ -92,7 +91,6 @@ export const AuthProvider = ({ children }: any) => {
             router.replace("/(content)/(tabs)/home");
             return response;
         } catch (error) {
-            console.error("Error en el login:", error);
             throw error;
         }
     };

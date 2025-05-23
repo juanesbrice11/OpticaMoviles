@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { createGlasses } from '@/services/glassesService';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { acceptbutton, cancelbutton, texttitile } from './tokens';
+import { acceptbutton, cancelbutton, texttitle } from './tokens';
 import { createGlassesSchema, CreateGlassesSchema } from '@/types/schemas';
 import { z } from 'zod';
 
@@ -151,7 +151,7 @@ export default function CreateGlassesScreen() {
                             className="w-full h-44"
                         />
                     </View>
-                    <Text className={`${texttitile}`}>
+                    <Text className={`${texttitle}`}>
                         Crear nueva gafa
                     </Text>
 
