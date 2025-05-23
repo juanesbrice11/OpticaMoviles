@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -10,44 +10,64 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     Platform,
-} from 'react-native';
-import { updateSale } from '@/services/salesService';
+    TouchableOpacity,
+} from "react-native";
+import { createSale } from "@/services/salesService";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
-interface EditSaleModalProps {
+interface CreateSaleModalProps {
     visible: boolean;
-    sale: {
-        id: number;
-        clientId: string;
-        glassesId: number;
-        total: number;
-        date: string;
-    };
     onClose: () => void;
     onSuccess: () => void;
 }
 
-export default function EditSaleModal({ visible, sale, onClose, onSuccess }: EditSaleModalProps) {
-    const [formData, setFormData] = useState({
-        clientId: sale.clientId,
-        glassesId: sale.glassesId.toString(),
-        total: sale.total.toString(),
-        date: new Date()
-    });
-    const [isLoading, setIsLoading] = useState(false);
+export default function CreateSaleModal({ visible, onClose, onSuccess }: CreateSaleModalProps) {
+    const [clientId, setClientId] = useState("");
+    const [glassesId, setGlassesId] = useState("");
+    const [total, setTotal] = useState("");
+    const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        if (visible) {
-            setFormData({
-                clientId: sale.clientId,
-                glassesId: sale.glassesId.toString(),
-                total: sale.total.toString(),
-                date: new Date()
-            });
-            setShowDatePicker(false);
+    const handleCreate = async () => {
+        if (!clientId || !glassesId || !total || !date) {
+            Alert.alert("Error", "Por favor complete todos los campos");
+            return;
         }
-    }, [visible, sale]);
+
+        try {
+            setIsLoading(true);
+            const saleData = {
+                clientId,
+                glassesId: parseInt(glassesId),
+                total: parseFloat(total),
+                date: date.toISOString().split('T')[0]
+            };
+
+            await createSale(saleData);
+            Alert.alert("Éxito", "Venta creada correctamente");
+            onSuccess();
+            resetForm();
+        } catch (error) {
+            Alert.alert("Error", "No se pudo crear la venta");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const resetForm = () => {
+        setClientId("");
+        setGlassesId("");
+        setTotal("");
+        setDate(new Date());
+        setShowDatePicker(false);
+    };
+
+    const handleDismiss = () => {
+        Keyboard.dismiss();
+        resetForm();
+        onClose();
+    };
 
     const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
         if (Platform.OS === 'android') {
@@ -56,43 +76,8 @@ export default function EditSaleModal({ visible, sale, onClose, onSuccess }: Edi
         if (selectedDate) {
             const date = new Date(selectedDate);
             date.setHours(12, 0, 0, 0);
-            setFormData(prev => ({ ...prev, date }));
+            setDate(date);
         }
-    };
-
-    const handleSave = async () => {
-        try {
-            setIsLoading(true);
-
-            if (!formData.clientId || !formData.glassesId || !formData.total || !formData.date) {
-                throw new Error('Todos los campos son requeridos');
-            }
-
-            const total = parseFloat(formData.total);
-            if (isNaN(total)) {
-                throw new Error('El total debe ser un número válido');
-            }
-
-            const updateData = {
-                clientId: formData.clientId,
-                glassesId: parseInt(formData.glassesId),
-                total: total,
-                date: formData.date.toISOString().split('T')[0]
-            };
-
-            await updateSale(sale.id, updateData);
-            Alert.alert("Éxito", "Venta actualizada correctamente");
-            onSuccess();
-        } catch (err) {
-            Alert.alert("Error", err instanceof Error ? err.message : "No se pudo actualizar la venta");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleDismiss = () => {
-        Keyboard.dismiss();
-        onClose();
     };
 
     return (
@@ -106,37 +91,41 @@ export default function EditSaleModal({ visible, sale, onClose, onSuccess }: Edi
                 <View className="flex-1 justify-center items-center bg-black/50">
                     <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
                         <View className="bg-white p-4 rounded-lg w-4/5 max-h-[80%]">
-                            <Text className="text-lg font-bold mb-4">Editar Venta</Text>
+                            <Text className="text-lg font-bold mb-4">Crear Venta</Text>
                             <ScrollView>
                                 <View className="mb-4">
                                     <Text className="font-semibold mb-1">ID del Cliente</Text>
                                     <TextInput
-                                        value={formData.clientId}
-                                        onChangeText={(text) => setFormData(prev => ({ ...prev, clientId: text }))}
+                                        value={clientId}
+                                        onChangeText={setClientId}
                                         className="border border-gray-300 rounded p-2"
                                         editable={!isLoading}
+                                        placeholder="Ingrese el ID del cliente"
+                                        keyboardType="numeric"
                                     />
                                 </View>
 
                                 <View className="mb-4">
-                                    <Text className="font-semibold mb-1">ID de Gafas</Text>
+                                    <Text className="font-semibold mb-1">ID de las Gafas</Text>
                                     <TextInput
-                                        value={formData.glassesId}
-                                        onChangeText={(text) => setFormData(prev => ({ ...prev, glassesId: text }))}
+                                        value={glassesId}
+                                        onChangeText={setGlassesId}
                                         className="border border-gray-300 rounded p-2"
-                                        keyboardType="numeric"
                                         editable={!isLoading}
+                                        placeholder="Ingrese el ID de las gafas"
+                                        keyboardType="numeric"
                                     />
                                 </View>
 
                                 <View className="mb-4">
                                     <Text className="font-semibold mb-1">Total</Text>
                                     <TextInput
-                                        value={formData.total}
-                                        onChangeText={(text) => setFormData(prev => ({ ...prev, total: text }))}
+                                        value={total}
+                                        onChangeText={setTotal}
                                         className="border border-gray-300 rounded p-2"
-                                        keyboardType="numeric"
                                         editable={!isLoading}
+                                        placeholder="Ingrese el total"
+                                        keyboardType="numeric"
                                     />
                                 </View>
 
@@ -146,7 +135,7 @@ export default function EditSaleModal({ visible, sale, onClose, onSuccess }: Edi
                                         onPress={() => setShowDatePicker(true)}
                                         className="border border-gray-300 rounded p-2"
                                     >
-                                        <Text>{formData.date.toLocaleDateString('es-ES', {
+                                        <Text>{date.toLocaleDateString('es-ES', {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric'
@@ -157,7 +146,7 @@ export default function EditSaleModal({ visible, sale, onClose, onSuccess }: Edi
                                         <View className="items-center w-full">
                                             <DateTimePicker
                                                 testID="dateTimePicker"
-                                                value={formData.date}
+                                                value={date}
                                                 mode="date"
                                                 is24Hour={true}
                                                 display={Platform.OS === 'ios' ? 'inline' : 'default'}
@@ -195,12 +184,12 @@ export default function EditSaleModal({ visible, sale, onClose, onSuccess }: Edi
                                     <Text>Cancelar</Text>
                                 </Pressable>
                                 <Pressable
-                                    onPress={handleSave}
+                                    onPress={handleCreate}
                                     className="bg-primary px-4 py-2 rounded"
                                     disabled={isLoading}
                                 >
                                     <Text className="text-white">
-                                        {isLoading ? "Guardando..." : "Guardar"}
+                                        {isLoading ? "Creando..." : "Crear"}
                                     </Text>
                                 </Pressable>
                             </View>
